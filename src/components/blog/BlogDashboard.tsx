@@ -1,27 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BlogEditor } from './BlogEditor';
-import { BlogManager } from './BlogManager';
+import { BlogManager } from './BlogManager.new';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   FileText, 
   Edit3, 
-  BarChart3, 
-  Settings,
   Plus,
-  ArrowLeft,
-  Home
+  ArrowLeft
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { BlogPost, getBlogPosts } from '@/utils/blogStorage';
 
-type DashboardView = 'overview' | 'editor' | 'manager' | 'stats';
+type DashboardView = 'overview' | 'editor' | 'manager';
 
 export function BlogDashboard() {
   const [currentView, setCurrentView] = useState<DashboardView>('overview');
   const [isEditing, setIsEditing] = useState(false);
+  const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
+  const [recentArticles, setRecentArticles] = useState<BlogPost[]>([]);
+
+  // Cargar artículos recientes al montar el componente
+  useEffect(() => {
+    const loadRecentArticles = () => {
+      const articles = getBlogPosts();
+      // Ordenar por fecha de creación (más recientes primero) y tomar solo los primeros 3
+      const sortedArticles = articles
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 3);
+      setRecentArticles(sortedArticles);
+    };
+
+    loadRecentArticles();
+
+    // Actualizar cuando cambie la vista (por si se crearon nuevos artículos)
+    if (currentView === 'overview') {
+      loadRecentArticles();
+    }
+  }, [currentView]);
+
+  // Escuchar cuando el botón Admin resetee el estado
+  useEffect(() => {
+    const checkForceReset = () => {
+      const forceReset = sessionStorage.getItem('forceReset');
+      if (forceReset === 'true') {
+        // Resetear el dashboard
+        setCurrentView('overview');
+        setIsEditing(false);
+        setEditingPost(null);
+        // Limpiar la bandera
+        sessionStorage.removeItem('forceReset');
+      }
+    };
+
+    // Verificar al montar y después de cada navegación
+    checkForceReset();
+
+    // También verificar periódicamente por si acaso
+    const interval = setInterval(checkForceReset, 100);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  // También verificar cuando cambie la vista actual
+  useEffect(() => {
+    const forceReset = sessionStorage.getItem('forceReset');
+    if (forceReset === 'true' && currentView !== 'overview') {
+      setCurrentView('overview');
+      setIsEditing(false);
+      setEditingPost(null);
+      sessionStorage.removeItem('forceReset');
+    }
+  }, [currentView]);
 
   const handleNewPost = () => {
+    setEditingPost(null);
+    setIsEditing(true);
+    setCurrentView('editor');
+  };
+
+  const handleEditPost = (post: BlogPost) => {
+    setEditingPost(post);
     setIsEditing(true);
     setCurrentView('editor');
   };
@@ -29,15 +91,35 @@ export function BlogDashboard() {
   const handleBackToOverview = () => {
     setCurrentView('overview');
     setIsEditing(false);
+    setEditingPost(null);
   };
 
-  const stats = {
-    totalPosts: 12,
-    publishedPosts: 8,
-    draftPosts: 4,
-    featuredPosts: 3,
-    totalViews: 15420,
-    totalLikes: 892
+  const handleBackToManager = () => {
+    setCurrentView('manager');
+    setIsEditing(false);
+    setEditingPost(null);
+  };
+
+  // Función para formatear la fecha
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
+  // Función para obtener el nombre de la categoría
+  const getCategoryName = (category: string) => {
+    const categories: { [key: string]: string } = {
+      'llamado-divino': 'Llamado Divino',
+      'mensaje-profetico': 'Mensaje Profético',
+      'proposito-divino': 'Propósito Divino',
+      'identidad': 'Identidad',
+      'profecia': 'Profecía'
+    };
+    return categories[category] || category;
   };
 
   if (currentView === 'editor') {
@@ -46,14 +128,14 @@ export function BlogDashboard() {
         <div className="p-4">
           <Button
             variant="ghost"
-            onClick={handleBackToOverview}
+            onClick={editingPost ? handleBackToManager : handleBackToOverview}
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver al Dashboard
+            {editingPost ? 'Volver al Gestor' : 'Volver al Dashboard'}
           </Button>
         </div>
-        <BlogEditor />
+        <BlogEditor editingPost={editingPost} />
       </div>
     );
   }
@@ -71,7 +153,7 @@ export function BlogDashboard() {
             Volver al Dashboard
           </Button>
         </div>
-        <BlogManager />
+        <BlogManager onEditPost={handleEditPost} onNewPost={handleNewPost} />
       </div>
     );
   }
@@ -90,7 +172,7 @@ export function BlogDashboard() {
         </div>
 
         {/* Acciones Rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -126,124 +208,6 @@ export function BlogDashboard() {
               </CardContent>
             </Card>
           </motion.div>
-
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Card 
-              className="shadow-peaceful hover:shadow-spiritual transition-spiritual cursor-pointer"
-              onClick={() => setCurrentView('stats')}
-            >
-              <CardContent className="p-6 text-center">
-                <BarChart3 className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Estadísticas</h3>
-                <p className="text-sm text-muted-foreground">
-                  Analiza el rendimiento de tu contenido
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Card className="shadow-peaceful hover:shadow-spiritual transition-spiritual cursor-pointer">
-              <CardContent className="p-6 text-center">
-                <Settings className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Configuración</h3>
-                <p className="text-sm text-muted-foreground">
-                  Personaliza tu blog y plantillas
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
-
-        {/* Estadísticas Rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <Card className="shadow-peaceful">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Artículos</p>
-                  <p className="text-3xl font-bold text-primary">{stats.totalPosts}</p>
-                </div>
-                <FileText className="w-8 h-8 text-primary" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-peaceful">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Publicados</p>
-                  <p className="text-3xl font-bold text-green-600">{stats.publishedPosts}</p>
-                </div>
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <div className="w-4 h-4 bg-green-600 rounded-full"></div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-peaceful">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Borradores</p>
-                  <p className="text-3xl font-bold text-orange-600">{stats.draftPosts}</p>
-                </div>
-                <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                  <div className="w-4 h-4 bg-orange-600 rounded-full"></div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-peaceful">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Destacados</p>
-                  <p className="text-3xl font-bold text-yellow-600">{stats.featuredPosts}</p>
-                </div>
-                <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <div className="w-4 h-4 bg-yellow-600 rounded-full"></div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-peaceful">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Visitas</p>
-                  <p className="text-3xl font-bold text-blue-600">{stats.totalViews.toLocaleString()}</p>
-                </div>
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-peaceful">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Me Gusta</p>
-                  <p className="text-3xl font-bold text-red-600">{stats.totalLikes.toLocaleString()}</p>
-                </div>
-                <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                  <div className="w-4 h-4 bg-red-600 rounded-full"></div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Artículos Recientes */}
@@ -255,33 +219,50 @@ export function BlogDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-gradient-peaceful rounded-lg">
-                <div>
-                  <h4 className="font-medium">¿Qué sucede cuando renuncias a la cruz, creyendo que es aflicción?</h4>
-                  <p className="text-sm text-muted-foreground">Publicado el 15 de Enero, 2025</p>
-                </div>
-                <Badge variant="outline">Destacado</Badge>
+            {recentArticles.length > 0 ? (
+              <div className="space-y-4">
+                {recentArticles.map((article) => (
+                  <div key={article.id} className="flex items-center justify-between p-4 bg-gradient-peaceful rounded-lg">
+                    <div>
+                      <h4 className="font-medium line-clamp-1">{article.title}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Publicado el {formatDate(article.createdAt)}
+                      </p>
+                    </div>
+                    <Badge variant="outline">
+                      {getCategoryName(article.category)}
+                    </Badge>
+                  </div>
+                ))}
               </div>
-              
-              <div className="flex items-center justify-between p-4 bg-gradient-peaceful rounded-lg">
-                <div>
-                  <h4 className="font-medium">Tu provisión en tiempo de aflicción</h4>
-                  <p className="text-sm text-muted-foreground">Publicado el 10 de Enero, 2025</p>
-                </div>
-                <Badge variant="outline">Mensaje Profético</Badge>
+            ) : (
+              <div className="text-center py-8">
+                <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                <p className="text-muted-foreground mb-4">
+                  No hay artículos recientes
+                </p>
+                <Button 
+                  onClick={handleNewPost}
+                  variant="outline"
+                  size="sm"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Crear Primer Artículo
+                </Button>
               </div>
-            </div>
+            )}
             
-            <div className="mt-6">
-              <Button 
-                variant="outline" 
-                onClick={() => setCurrentView('manager')}
-                className="w-full"
-              >
-                Ver Todos los Artículos
-              </Button>
-            </div>
+            {recentArticles.length > 0 && (
+              <div className="mt-6">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setCurrentView('manager')}
+                  className="w-full"
+                >
+                  Ver Todos los Artículos
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

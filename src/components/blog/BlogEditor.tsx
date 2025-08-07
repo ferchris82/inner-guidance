@@ -9,102 +9,49 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
-  Palette, 
   Type, 
   Image, 
   Save, 
   Eye, 
   Settings, 
-  FileText,
-  Sparkles,
-  BookOpen,
-  Heart,
-  Zap,
-  Moon,
-  Sun
+  FileText
 } from 'lucide-react';
 import { QUILL_CONFIG } from '@/config/quill';
 import { saveBlogPost, BlogPost as BlogPostType } from '@/utils/blogStorage';
 
-// Tipos de plantillas disponibles
-const blogTemplates = {
-  spiritual: {
-    name: "Espiritual",
-    icon: Sparkles,
-    description: "Diseño elegante para contenido espiritual",
-    styles: {
-      fontFamily: "Georgia, serif",
-      primaryColor: "#2c3e50",
-      secondaryColor: "#7f8c8d",
-      backgroundColor: "#f9f9f9",
-      spacing: "relaxed",
-      typography: "elegant"
-    }
-  },
-  modern: {
-    name: "Moderno",
-    icon: Zap,
-    description: "Diseño limpio y contemporáneo",
-    styles: {
-      fontFamily: "Inter, sans-serif",
-      primaryColor: "#1a1a1a",
-      secondaryColor: "#666",
-      backgroundColor: "#ffffff",
-      spacing: "compact",
-      typography: "clean"
-    }
-  },
-  classic: {
-    name: "Clásico",
-    icon: BookOpen,
-    description: "Estilo tradicional y formal",
-    styles: {
-      fontFamily: "Times New Roman, serif",
-      primaryColor: "#2c1810",
-      secondaryColor: "#8b4513",
-      backgroundColor: "#fafafa",
-      spacing: "traditional",
-      typography: "formal"
-    }
-  },
-  minimal: {
-    name: "Minimalista",
-    icon: Moon,
-    description: "Diseño simple y enfocado",
-    styles: {
-      fontFamily: "Helvetica, Arial, sans-serif",
-      primaryColor: "#000000",
-      secondaryColor: "#333333",
-      backgroundColor: "#ffffff",
-      spacing: "minimal",
-      typography: "simple"
-    }
-  }
-};
-
 // Usar la interfaz del sistema de almacenamiento
 type BlogPost = BlogPostType;
 
-export function BlogEditor() {
-  const [blogPost, setBlogPost] = useState<BlogPost>({
-    id: Date.now().toString(),
-    title: '',
-    excerpt: '',
-    content: '',
-    template: 'spiritual',
-    category: '',
-    author: 'Maité Gutiérrez',
-    featuredImage: '',
-    readTime: '5 min',
-    featured: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    customStyles: {
-      primaryColor: '#2c3e50',
-      secondaryColor: '#7f8c8d',
-      fontFamily: 'Georgia, serif',
-      spacing: 'relaxed'
+interface BlogEditorProps {
+  editingPost?: BlogPost | null;
+}
+
+export function BlogEditor({ editingPost }: BlogEditorProps) {
+  const [blogPost, setBlogPost] = useState<BlogPost>(() => {
+    // Si estamos editando un post, usar sus datos; sino, crear uno nuevo
+    if (editingPost) {
+      return editingPost;
     }
+    return {
+      id: Date.now().toString(),
+      title: '',
+      excerpt: '',
+      content: '',
+      template: 'default',
+      category: '',
+      author: 'Maité Gutiérrez',
+      featuredImage: '',
+      readTime: '5 min',
+      featured: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      customStyles: {
+        primaryColor: '#2c3e50',
+        secondaryColor: '#7f8c8d',
+        fontFamily: 'Georgia, serif',
+        spacing: 'relaxed'
+      }
+    };
   });
 
   const [isPreviewMode, setIsPreviewMode] = useState(false);
@@ -115,21 +62,6 @@ export function BlogEditor() {
 
   const handleEditorChange = (content: string) => {
     setBlogPost(prev => ({ ...prev, content }));
-  };
-
-  const handleTemplateChange = (template: string) => {
-    const selectedTemplate = blogTemplates[template as keyof typeof blogTemplates];
-    setBlogPost(prev => ({
-      ...prev,
-      template,
-      customStyles: {
-        ...prev.customStyles,
-        primaryColor: selectedTemplate.styles.primaryColor,
-        secondaryColor: selectedTemplate.styles.secondaryColor,
-        fontFamily: selectedTemplate.styles.fontFamily,
-        spacing: selectedTemplate.styles.spacing
-      }
-    }));
   };
 
   const handleSave = async () => {
@@ -153,37 +85,47 @@ export function BlogEditor() {
         return;
       }
       
-      // Guardar el artículo
-      const success = saveBlogPost(blogPost);
+      // Guardar el artículo (actualizar fecha de modificación)
+      const postToSave = {
+        ...blogPost,
+        updatedAt: new Date().toISOString()
+      };
+      
+      const success = saveBlogPost(postToSave);
       
       if (success) {
-        setSaveMessage('¡Artículo guardado exitosamente!');
+        setSaveMessage(`¡Artículo ${editingPost ? 'actualizado' : 'guardado'} exitosamente!`);
         
-        // Limpiar todos los campos después de guardar exitosamente
-        setBlogPost({
-          id: Date.now().toString(),
-          title: '',
-          excerpt: '',
-          content: '',
-          template: 'spiritual',
-          category: '',
-          author: 'Maité Gutiérrez',
-          featuredImage: '',
-          readTime: '5 min',
-          featured: false,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          customStyles: {
-            primaryColor: '#2c3e50',
-            secondaryColor: '#7f8c8d',
-            fontFamily: 'Georgia, serif',
-            spacing: 'relaxed'
+        // Solo limpiar campos si estamos creando un nuevo post, no editando
+        if (!editingPost) {
+          setBlogPost({
+            id: Date.now().toString(),
+            title: '',
+            excerpt: '',
+            content: '',
+            template: 'default',
+            category: '',
+            author: 'Maité Gutiérrez',
+            featuredImage: '',
+            readTime: '5 min',
+            featured: false,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            customStyles: {
+              primaryColor: '#2c3e50',
+              secondaryColor: '#7f8c8d',
+              fontFamily: 'Georgia, serif',
+              spacing: 'relaxed'
+            }
+          });
+          
+          // Limpiar el editor Quill si existe
+          if (quillRef.current) {
+            quillRef.current.getEditor().setText('');
           }
-        });
-        
-        // Limpiar el editor Quill si existe
-        if (quillRef.current) {
-          quillRef.current.getEditor().setText('');
+        } else {
+          // Si estamos editando, actualizar el estado local con los cambios
+          setBlogPost(postToSave);
         }
         
         // Limpiar el mensaje después de 3 segundos
@@ -197,18 +139,6 @@ export function BlogEditor() {
     } finally {
       setIsSaving(false);
     }
-  };
-
-  const getTemplateStyles = () => {
-    const template = blogTemplates[blogPost.template as keyof typeof blogTemplates];
-    return {
-      '--primary-color': blogPost.customStyles.primaryColor,
-      '--secondary-color': blogPost.customStyles.secondaryColor,
-      '--font-family': blogPost.customStyles.fontFamily,
-      '--spacing': blogPost.customStyles.spacing === 'relaxed' ? '2rem' : 
-                   blogPost.customStyles.spacing === 'compact' ? '1rem' : 
-                   blogPost.customStyles.spacing === 'minimal' ? '0.5rem' : '1.5rem'
-    } as React.CSSProperties;
   };
 
   return (
@@ -300,7 +230,6 @@ export function BlogEditor() {
                   /* Vista Previa */
                   <div 
                     className="prose prose-lg max-w-none"
-                    style={getTemplateStyles()}
                   >
                     <h1>{blogPost.title}</h1>
                     <p className="text-xl text-muted-foreground">{blogPost.excerpt}</p>
@@ -313,44 +242,6 @@ export function BlogEditor() {
 
           {/* Panel Lateral */}
           <div className="space-y-6">
-            {/* Plantillas */}
-            <Card className="shadow-peaceful">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Palette className="w-5 h-5" />
-                  Plantillas
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {Object.entries(blogTemplates).map(([key, template]) => {
-                    const Icon = template.icon;
-                    return (
-                      <motion.div
-                        key={key}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Button
-                          variant={blogPost.template === key ? "default" : "outline"}
-                          className="w-full justify-start h-auto p-4"
-                          onClick={() => handleTemplateChange(key)}
-                        >
-                          <Icon className="w-5 h-5 mr-3" />
-                          <div className="text-left">
-                            <div className="font-medium">{template.name}</div>
-                            <div className="text-xs text-muted-foreground">
-                              {template.description}
-                            </div>
-                          </div>
-                        </Button>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Configuración */}
             <Card className="shadow-peaceful">
               <CardHeader>

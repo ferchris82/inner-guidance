@@ -24,6 +24,16 @@ export function Navigation() {
     setIsOpen(false);
   };
 
+  const handleAdminNavigation = () => {
+    // Limpiar cualquier estado previo y navegar al dashboard principal
+    sessionStorage.removeItem('adminView');
+    sessionStorage.removeItem('editingPost');
+    // Agregar bandera temporal para forzar reset del dashboard
+    sessionStorage.setItem('forceReset', 'true');
+    navigate('/admin');
+    setIsOpen(false);
+  };
+
   return (
     <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 lg:px-6">
@@ -66,12 +76,14 @@ export function Navigation() {
             >
               Contacto
             </Button>
-            <Link to="/admin">
-              <Button variant="outline" size="sm">
-                <Settings className="w-4 h-4 mr-1" />
-                Admin
-              </Button>
-            </Link>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleAdminNavigation}
+            >
+              <Settings className="w-4 h-4 mr-1" />
+              Admin
+            </Button>
           </div>
 
           {/* Mobile menu button */}
@@ -120,12 +132,15 @@ export function Navigation() {
               >
                 Contacto
               </Button>
-              <Link to="/admin">
-                <Button variant="outline" size="sm" className="w-full mt-2">
-                  <Settings className="w-4 h-4 mr-1" />
-                  Admin
-                </Button>
-              </Link>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full mt-2"
+                onClick={handleAdminNavigation}
+              >
+                <Settings className="w-4 h-4 mr-1" />
+                Admin
+              </Button>
             </div>
           </div>
         )}

@@ -1,133 +1,45 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, ArrowRight, BookOpen, X, Share2, ArrowLeft, Clock, User } from "lucide-react";
+import { Calendar, ArrowRight, BookOpen, X, Share2, ArrowLeft, Clock, User, Plus } from "lucide-react";
 import { getBlogPosts, BlogPost } from "@/utils/blogStorage";
 
 export function BlogSection() {
   const [selectedArticle, setSelectedArticle] = useState<number | null>(null);
   const [articles, setArticles] = useState<BlogPost[]>([]);
+  const [showAllArticles, setShowAllArticles] = useState(false);
+  const navigate = useNavigate();
 
   // Cargar artículos al montar el componente
   useEffect(() => {
     const loadArticles = () => {
       const savedArticles = getBlogPosts();
-      if (savedArticles.length > 0) {
-        setArticles(savedArticles);
-      } else {
-        // Artículos por defecto si no hay ninguno guardado
-        const defaultArticles: BlogPost[] = [
-          {
-            id: "1",
-            title: "¿Qué sucede cuando renuncias a la cruz, creyendo que es aflicción?",
-            excerpt: "Hay momentos en que Dios revela el llamado, despierta el propósito, y marca asignaciones concretas sobre una persona. La carga es clara. El anhelo por obedecer es verdadero...",
-            content: `
-              <article class="prose prose-lg max-w-none">
-                <h1>✨ Aceptación del llamado</h1>
-                <p>Hay momentos en que Dios revela el llamado, despierta el propósito, y marca asignaciones concretas sobre una persona. La carga es clara. El anhelo por obedecer es verdadero. La oración suena sincera:</p>
-                <blockquote>"Señor, haz conmigo como quieras. Te entrego mi vida. Envíame."</blockquote>
-                <p>Y Dios toma esas palabras en serio. Pero el Reino no avanza con promesas humanas, sino con obediencia probada.</p>
-                <blockquote>"El crisol es para la plata, y la hornaza para el oro, pero Jehová prueba los corazones." (Proverbios 17:3)</blockquote>
-                <p>La prueba no es castigo. Es selección.</p>
-                <p>Cuando el cielo te llama, la tierra te sacude. Cuando el propósito es revelado, la fidelidad es probada. Porque antes de confiar una herencia, Dios examina si puedes soportar peso, presión, oposición.</p>
-                <p>Y ahí es donde muchos fallan. No porque no amen a Dios, sino porque no entienden cómo funciona el mundo espiritual.</p>
-                <h2>💡 El día de aflicción revela dónde está tu fuerza</h2>
-                <p>Dios no tienta, pero sí permite el crisol. Permite:</p>
-                <ul>
-                  <li>Incomodidad</li>
-                  <li>Despojo</li>
-                  <li>Incomprensión</li>
-                </ul>
-                <p>No para aplastarte… sino para exponer si tu fuerza viene del Espíritu o de tus recursos.</p>
-                <blockquote>"Si fueres flojo en el día de la angustia, tu fuerza será reducida." (Proverbios 24:10)</blockquote>
-                <p>En hebreo, "flojo" es <strong>rafáh</strong>, que implica:</p>
-                <ul>
-                  <li>Flaquear</li>
-                  <li>Ceder</li>
-                  <li>Soltar</li>
-                  <li>Aflojar el alma</li>
-                </ul>
-                <p>Es no sostener la fe cuando duele. Es clamar por alivio, antes que por transformación.</p>
-                <h2>🙏 A veces Dios permite… lo que pediste fuera de su diseño</h2>
-                <p>Cuando en medio de la prueba clamas:</p>
-                <blockquote>"Señor, sácame de esto…"</blockquote>
-                <p>Dios puede responder concediendo la petición. No porque sea su voluntad perfecta, sino porque no obliga a nadie a seguir a Cristo.</p>
-                <blockquote>"Si alguno quiere venir en pos de mí, niéguese a sí mismo, tome su cruz y sígame." (Lucas 9:23)</blockquote>
-                <p>El que no está dispuesto, no será forzado.<br>
-                Pero tampoco será hallado digno de lo que fue reservado al final de la prueba.</p>
-                <h2>😔 El alma humana se acomoda… y se desvía</h2>
-                <p>Una vez pasa la aflicción y se consigue "estabilidad", muchos se sienten "bendecidos". Pero la pregunta no es si tienes trabajo o metas… sino:</p>
-                <p><strong>¿Estás en lo que se te asignó?</strong></p>
-                <p>Muchos cambian:</p>
-                <ul>
-                  <li>Fuego por rutina</li>
-                  <li>Altar por agenda</li>
-                  <li>Obediencia por productividad</li>
-                </ul>
-                <p>Sin notarlo, se convierten en <strong>autómatas espirituales</strong>. Siguen activos, pero han perdido el rumbo.</p>
-                <h2>🧠 Cuando la fuerza humana se vuelve en tu contra</h2>
-                <p>Dios había preparado un galardón. Un avance real. Una estabilidad por diseño.</p>
-                <p>Pero al declinar la prueba, el alma se aferra a lo que puede conseguir por sí misma. Y eso que parecía fortaleza… se convierte en carga.</p>
-                <blockquote>"Porque dijisteis: Haremos huida en caballos veloces, por tanto, vosotros huiréis; sobre corceles ligeros cabalgaremos, por eso serán veloces vuestros perseguidores." (Isaías 30:16)</blockquote>
-                <p>La fuente en la que confiaste, el plan que ideaste, el trabajo que sostenías… se vuelve contra ti.</p>
-              </article>
-            `,
-            template: "spiritual",
-            category: "llamado-divino",
-            author: "Maité Gutiérrez",
-            featuredImage: "/images/transformation-journey.jpg",
-            readTime: "8 min",
-            featured: true,
-            createdAt: "2025-08-05T00:00:00.000Z",
-            updatedAt: "2025-08-05T00:00:00.000Z",
-            customStyles: {
-              primaryColor: "#2c3e50",
-              secondaryColor: "#7f8c8d",
-              fontFamily: "Georgia, serif",
-              spacing: "relaxed"
-            }
-          },
-          {
-            id: "2",
-            title: "Mensaje profético: Tu provisión en tiempo de aflicción",
-            excerpt: "Una revelación profética sobre el ministerio de los dos testigos y su relevancia para la iglesia de hoy...",
-            content: `
-              <article class="prose prose-lg max-w-none">
-                <h1>🌟 Mensaje Profético: Tu Provisión en Tiempo de Aflicción</h1>
-                <p>En este tiempo de aflicción, Dios tiene una provisión especial para ti. Este mensaje profético te revelará cómo acceder a la provisión divina en medio de las pruebas.</p>
-                <h2>💎 La Provisión Divina</h2>
-                <p>Dios nunca te deja sin recursos. En cada aflicción, hay una provisión preparada de antemano.</p>
-                <blockquote>"Mi Dios, pues, suplirá todo lo que os falta conforme a sus riquezas en gloria en Cristo Jesús." (Filipenses 4:19)</blockquote>
-                <h3>🎯 Tres Niveles de Provisión</h3>
-                <ol>
-                  <li><strong>Provisión Física:</strong> Necesidades materiales</li>
-                  <li><strong>Provisión Espiritual:</strong> Fortaleza y sabiduría</li>
-                  <li><strong>Provisión Emocional:</strong> Paz y consuelo</li>
-                </ol>
-              </article>
-            `,
-            template: "modern",
-            category: "mensaje-profetico",
-            author: "Maité Gutiérrez",
-            featuredImage: "/images/provision-afliccion.jpg",
-            readTime: "5 min",
-            featured: false,
-            createdAt: "2025-08-02T00:00:00.000Z",
-            updatedAt: "2025-08-02T00:00:00.000Z",
-            customStyles: {
-              primaryColor: "#1a1a1a",
-              secondaryColor: "#666",
-              fontFamily: "Inter, sans-serif",
-              spacing: "compact"
-            }
-          }
-        ];
-        setArticles(defaultArticles);
-      }
+      setArticles(savedArticles);
     };
     
     loadArticles();
+    
+    // Escuchar cambios en localStorage (opcional)
+    const handleStorageChange = () => {
+      loadArticles();
+    };
+    
+    // Escuchar cuando se vuelve visible la página
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        loadArticles();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const openArticle = (index: number) => {
@@ -136,6 +48,20 @@ export function BlogSection() {
 
   const closeArticle = () => {
     setSelectedArticle(null);
+  };
+
+  const toggleShowAllArticles = () => {
+    setShowAllArticles(!showAllArticles);
+  };
+
+  const handleNavigateToEditor = () => {
+    navigate('/admin');
+  };
+
+  // Método público para recargar artículos (útil para llamadas externas)
+  const reloadArticles = () => {
+    const savedArticles = getBlogPosts();
+    setArticles(savedArticles);
   };
 
   // Función para formatear la fecha
@@ -168,9 +94,27 @@ export function BlogSection() {
             <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-gradient-spiritual">
               Blog Espiritual
             </h2>
-            <p className="text-xl text-muted-foreground">
-              Cargando artículos...
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              ¡Bienvenido a tu espacio espiritual! Aquí compartirás reflexiones proféticas, 
+              enseñanzas bíblicas y revelaciones para el crecimiento en el Reino de Dios.
             </p>
+            <div className="mb-8">
+              <BookOpen className="w-24 h-24 text-muted-foreground mx-auto mb-4 opacity-50" />
+              <h3 className="text-2xl font-heading font-bold mb-4 text-primary">
+                Comienza tu ministerio de escritura
+              </h3>
+              <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
+                Crea tu primer artículo y comparte la palabra que Dios ha puesto en tu corazón.
+              </p>
+              <Button 
+                onClick={handleNavigateToEditor}
+                size="lg"
+                className="bg-gradient-spiritual hover:shadow-spiritual transition-spiritual"
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                Crear Mi Primer Artículo
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -241,7 +185,7 @@ export function BlogSection() {
             {/* Articles Grid */}
             {articles.length > 1 && (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                {articles.slice(1).map((article, index) => (
+                {(showAllArticles ? articles.slice(1) : articles.slice(1, 4)).map((article, index) => (
                   <Card 
                     key={article.id} 
                     className="shadow-peaceful hover:shadow-spiritual transition-spiritual animate-slide-up group cursor-pointer overflow-hidden"
@@ -285,16 +229,20 @@ export function BlogSection() {
               </div>
             )}
 
-            <div className="text-center">
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-spiritual"
-              >
-                Ver todos los artículos
-                <BookOpen className="w-5 h-5 ml-2" />
-              </Button>
-            </div>
+            {/* Show "View All" button only if there are more than 4 articles */}
+            {articles.length > 4 && (
+              <div className="text-center">
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  onClick={toggleShowAllArticles}
+                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-spiritual"
+                >
+                  {showAllArticles ? 'Ver menos artículos' : 'Ver todos los artículos'}
+                  <BookOpen className="w-5 h-5 ml-2" />
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </section>
