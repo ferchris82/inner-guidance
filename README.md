@@ -1,33 +1,23 @@
-# Welcome to your Lovable project
+# Inner Guidance - Plataforma Espiritual
 
-## Project info
+## Acerca del Proyecto
 
-**URL**: https://lovable.dev/projects/c6e7aecb-84e1-46b8-baa9-2c8b8c97ab5e
+Una plataforma web espiritual para Maité Gutiérrez, monitora espiritual dedicada al crecimiento personal y desarrollo espiritual. La aplicación incluye un blog, sistema de gestión de contenido, autenticación y más.
 
-## How can I edit this code?
+## Cómo Editar el Código
 
-There are several ways of editing your application.
+Puedes trabajar localmente usando tu IDE preferido clonando este repositorio.
 
-**Use Lovable**
+El único requisito es tener Node.js & npm instalados - [instalar con nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c6e7aecb-84e1-46b8-baa9-2c8b8c97ab5e) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+Sigue estos pasos:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Paso 1: Clona el repositorio
+git clone <TU_URL_GIT>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Paso 2: Navega al directorio del proyecto
+cd inner-guidance
 
 # Step 3: Install the necessary dependencies.
 npm i
@@ -37,22 +27,22 @@ npm run dev
 ```
 
 **Edit a file directly in GitHub**
+# Paso 3: Instala las dependencias
+npm install
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+# Paso 4: Ejecuta el servidor de desarrollo
+npm run dev
+```
 
-**Use GitHub Codespaces**
+## Editar Usando GitHub
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- Navega a los archivos que deseas modificar.
+- Haz clic en el botón "Edit" (ícono de lápiz) en la parte superior derecha.
+- Realiza tus cambios y confirma los cambios.
 
-## What technologies are used for this project?
+## Tecnologías Utilizadas
 
-This project is built with:
+Este proyecto está construido con:
 
 - Vite
 - TypeScript
@@ -60,14 +50,31 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
+## Cómo Desplegar el Proyecto
 
-Simply open [Lovable](https://lovable.dev/projects/c6e7aecb-84e1-46b8-baa9-2c8b8c97ab5e) and click on Share -> Publish.
+Puedes desplegar este proyecto en cualquier servicio de hosting estático como:
 
-## Can I connect a custom domain to my Lovable project?
+- Vercel
+- Netlify
+- GitHub Pages
+- Render
 
-Yes, you can!
+## Estructura del Proyecto
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```
+src/
+├── components/        # Componentes reutilizables
+├── pages/            # Páginas principales
+├── hooks/            # Hooks personalizados
+├── utils/            # Utilidades y helpers
+├── assets/           # Imágenes y recursos
+└── lib/              # Configuraciones de librerías
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Características
+
+- ✅ Blog espiritual con editor completo
+- ✅ Sistema de autenticación
+- ✅ Gestión de redes sociales
+- ✅ Diseño responsivo
+- ✅ Tema espiritual personalizado

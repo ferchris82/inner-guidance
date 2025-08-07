@@ -229,8 +229,8 @@ export function BlogSection() {
               </div>
             )}
 
-            {/* Show "View All" button only if there are more than 4 articles */}
-            {articles.length > 4 && (
+            {/* Show "View All" button only if there are more than 3 articles */}
+            {articles.length > 3 && (
               <div className="text-center">
                 <Button 
                   variant="outline" 

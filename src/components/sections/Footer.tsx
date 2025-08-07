@@ -1,4 +1,4 @@
-import { Heart, Mail, MapPin, Clock } from "lucide-react";
+import { Mail, MapPin, Clock } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export function Footer() {
@@ -71,14 +71,6 @@ export function Footer() {
                 </li>
                 <li>
                   <button 
-                    onClick={() => handleNavigation('recursos')}
-                    className="text-primary-foreground/80 hover:text-accent transition-spiritual"
-                  >
-                    Recursos
-                  </button>
-                </li>
-                <li>
-                  <button 
                     onClick={() => handleNavigation('contacto')}
                     className="text-primary-foreground/80 hover:text-accent transition-spiritual"
                   >
@@ -140,12 +132,10 @@ export function Footer() {
           <div className="border-t border-primary-foreground/20 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
               <div className="text-primary-foreground/70 text-sm">
-                © 2025 Maité Gutiérrez - Monitora Espiritual. Todos los derechos reservados.
+                 2025 Maité Gutiérrez - Monitora Espiritual.
               </div>
               <div className="flex items-center space-x-2 text-primary-foreground/70 text-sm">
-                <span>Hecho con</span>
-                <Heart className="w-4 h-4 text-accent" />
-                <span>para el Reino de Dios</span>
+                <span>Hecho por Christian F. Rojas en TopIA's</span>
               </div>
             </div>
           </div>

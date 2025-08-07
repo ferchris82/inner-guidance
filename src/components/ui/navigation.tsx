@@ -87,12 +87,6 @@ export function Navigation() {
             >
               Blog
             </button>
-            <button 
-              onClick={() => scrollToSection('recursos')}
-              className="text-foreground hover:text-primary transition-spiritual"
-            >
-              Recursos
-            </button>
             <Button 
               onClick={() => scrollToSection('contacto')}
               className="bg-gradient-spiritual hover:shadow-spiritual transition-spiritual"
@@ -101,15 +95,25 @@ export function Navigation() {
             </Button>
             {/* Botones de Admin/Logout */}
             {isAuth ? (
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleLogout}
-                className="text-red-600 border-red-600 hover:bg-red-50"
-              >
-                <LogOut className="w-4 h-4 mr-1" />
-                Cerrar Sesión
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleAdminNavigation}
+                >
+                  <Settings className="w-4 h-4 mr-1" />
+                  Admin
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleLogout}
+                  className="text-red-600 border-red-600 hover:bg-red-50"
+                >
+                  <LogOut className="w-4 h-4 mr-1" />
+                  Cerrar Sesión
+                </Button>
+              </div>
             ) : (
               <Button 
                 variant="outline" 
@@ -156,12 +160,6 @@ export function Navigation() {
               >
                 Blog
               </button>
-              <button 
-                onClick={() => scrollToSection('recursos')}
-                className="block px-3 py-2 text-foreground hover:text-primary transition-spiritual w-full text-left"
-              >
-                Recursos
-              </button>
               <Button 
                 onClick={() => scrollToSection('contacto')}
                 className="w-full mt-2 bg-gradient-spiritual hover:shadow-spiritual transition-spiritual"
@@ -170,15 +168,26 @@ export function Navigation() {
               </Button>
               {/* Botones de Admin/Logout para móvil */}
               {isAuth ? (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full mt-2 text-red-600 border-red-600 hover:bg-red-50"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="w-4 h-4 mr-1" />
-                  Cerrar Sesión
-                </Button>
+                <div className="flex flex-col gap-2 mt-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full"
+                    onClick={handleAdminNavigation}
+                  >
+                    <Settings className="w-4 h-4 mr-1" />
+                    Admin
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full text-red-600 border-red-600 hover:bg-red-50"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="w-4 h-4 mr-1" />
+                    Cerrar Sesión
+                  </Button>
+                </div>
               ) : (
                 <Button 
                   variant="outline" 
