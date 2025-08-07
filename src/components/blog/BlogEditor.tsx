@@ -17,10 +17,8 @@ import {
   FileText
 } from 'lucide-react';
 import { QUILL_CONFIG } from '@/config/quill';
-import { saveBlogPost, BlogPost as BlogPostType } from '@/utils/blogStorage';
-
-// Usar la interfaz del sistema de almacenamiento
-type BlogPost = BlogPostType;
+import { saveBlogPost, updateBlogPost } from '@/utils/blogSupabase';
+import { BlogPost } from '@/lib/supabase';
 
 interface BlogEditorProps {
   editingPost?: BlogPost | null;

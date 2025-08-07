@@ -122,3 +122,4 @@ export const clearAllPosts = (): void => {
     console.error('Error al limpiar artículos:', error);
   }
 };
+

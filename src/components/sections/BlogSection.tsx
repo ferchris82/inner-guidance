@@ -4,40 +4,43 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, ArrowRight, BookOpen, X, Share2, ArrowLeft, Clock, User, Plus } from "lucide-react";
-import { getBlogPosts, BlogPost } from "@/utils/blogStorage";
+import { getBlogPosts } from "@/utils/blogSupabase";
+import { BlogPost } from "@/lib/supabase";
 
 export function BlogSection() {
   const [selectedArticle, setSelectedArticle] = useState<number | null>(null);
   const [articles, setArticles] = useState<BlogPost[]>([]);
   const [showAllArticles, setShowAllArticles] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   // Cargar artículos al montar el componente
   useEffect(() => {
-    const loadArticles = () => {
-      const savedArticles = getBlogPosts();
-      setArticles(savedArticles);
+    const loadArticles = async () => {
+      setLoading(true);
+      try {
+        const savedArticles = await getBlogPosts();
+        setArticles(savedArticles);
+      } catch (error) {
+        console.error('Error loading articles:', error);
+      } finally {
+        setLoading(false);
+      }
     };
     
     loadArticles();
     
-    // Escuchar cambios en localStorage (opcional)
-    const handleStorageChange = () => {
-      loadArticles();
-    };
-    
     // Escuchar cuando se vuelve visible la página
-    const handleVisibilityChange = () => {
+    const handleVisibilityChange = async () => {
       if (!document.hidden) {
-        loadArticles();
+        const savedArticles = await getBlogPosts();
+        setArticles(savedArticles);
       }
     };
     
-    window.addEventListener('storage', handleStorageChange);
     document.addEventListener('visibilitychange', handleVisibilityChange);
     
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
@@ -59,9 +62,13 @@ export function BlogSection() {
   };
 
   // Método público para recargar artículos (útil para llamadas externas)
-  const reloadArticles = () => {
-    const savedArticles = getBlogPosts();
-    setArticles(savedArticles);
+  const reloadArticles = async () => {
+    try {
+      const savedArticles = await getBlogPosts();
+      setArticles(savedArticles);
+    } catch (error) {
+      console.error('Error reloading articles:', error);
+    }
   };
 
   // Función para formatear la fecha
@@ -85,6 +92,25 @@ export function BlogSection() {
     };
     return categories[category] || category;
   };
+
+  // Mostrar loading state
+  if (loading) {
+    return (
+      <section id="blog" className="py-20 bg-gradient-peaceful">
+        <div className="container mx-auto px-4 lg:px-6">
+          <div className="max-w-6xl mx-auto text-center">
+            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-primary">
+              Blog Espiritual
+            </h2>
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <span className="ml-3 text-muted-foreground">Cargando artículos...</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   if (articles.length === 0) {
     return (
@@ -152,10 +178,10 @@ export function BlogSection() {
                       <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-6 flex-wrap">
                         <div className="flex items-center space-x-1">
                           <Calendar className="w-4 h-4" />
-                          <span>{formatDate(articles[0].createdAt)}</span>
+                          <span>{formatDate(articles[0].created_at)}</span>
                         </div>
                         <Badge variant="outline">{getCategoryName(articles[0].category)}</Badge>
-                        <span>{articles[0].readTime} de lectura</span>
+                        <span>{articles[0].read_time} de lectura</span>
                       </div>
                       <Button 
                         onClick={() => openArticle(0)}
@@ -167,7 +193,7 @@ export function BlogSection() {
                     </div>
                     <div className="md:w-1/3 bg-gradient-spiritual flex items-center justify-center p-8 relative overflow-hidden">
                       <img 
-                        src={articles[0].featuredImage} 
+                        src={articles[0].featured_image} 
                         alt="Viaje de transformación espiritual - De la aflicción al propósito"
                         className="w-full h-full object-cover absolute inset-0 opacity-90"
                       />
@@ -197,7 +223,7 @@ export function BlogSection() {
                           {getCategoryName(article.category)}
                         </Badge>
                         <span className="text-xs text-muted-foreground">
-                          {article.readTime}
+                          {article.read_time}
                         </span>
                       </div>
                       <CardTitle className="text-xl font-heading group-hover:text-primary transition-spiritual break-words hyphens-auto">
@@ -211,7 +237,7 @@ export function BlogSection() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                           <Calendar className="w-3 h-3" />
-                          <span>{formatDate(article.createdAt)}</span>
+                          <span>{formatDate(article.created_at)}</span>
                         </div>
                         <Button 
                           variant="ghost" 
@@ -282,11 +308,11 @@ export function BlogSection() {
                   </Badge>
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-4 h-4" />
-                    <span>{formatDate(articles[selectedArticle].createdAt)}</span>
+                    <span>{formatDate(articles[selectedArticle].created_at)}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Clock className="w-4 h-4" />
-                    <span>{articles[selectedArticle].readTime} de lectura</span>
+                    <span>{articles[selectedArticle].read_time} de lectura</span>
                   </div>
                   {articles[selectedArticle].author && (
                     <div className="flex items-center space-x-1">
@@ -306,11 +332,11 @@ export function BlogSection() {
               </header>
 
               {/* Featured Image */}
-              {articles[selectedArticle].featuredImage && (
+              {articles[selectedArticle].featured_image && (
                 <div className="mb-8">
                   <div className="relative aspect-video rounded-2xl overflow-hidden shadow-spiritual">
                     <img 
-                      src={articles[selectedArticle].featuredImage} 
+                      src={articles[selectedArticle].featured_image} 
                       alt={`Imagen del artículo: ${articles[selectedArticle].title}`}
                       className="w-full h-full object-cover"
                     />

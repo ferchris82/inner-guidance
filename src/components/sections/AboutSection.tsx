@@ -10,14 +10,14 @@ export function AboutSection() {
         <div className="max-w-6xl mx-auto">
           {/* Header Section */}
           <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-gradient-spiritual">
+            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-gradient-brand-full">
               Acerca de mí
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              María Teresa Gutiérrez Villa, conocida como <strong className="text-primary">Maité</strong>
+              María Teresa Gutiérrez Villa, conocida como <strong className="text-violet-brand">Maité</strong>
             </p>
             <div className="mt-4 p-4 bg-white/10 rounded-xl backdrop-blur-sm">
-              <p className="text-lg font-semibold text-gradient-spiritual">
+              <p className="text-lg font-semibold text-gradient-indigo-turquoise">
                 "Mi propósito es... guiarte a encontrar el tuyo"
               </p>
             </div>
@@ -38,18 +38,18 @@ export function AboutSection() {
 
             {/* Story Section */}
             <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              <h3 className="text-3xl font-heading font-bold mb-6 text-primary">
+              <h3 className="text-3xl font-heading font-bold mb-6 text-chapter-title">
                 Mi Historia Espiritual
               </h3>
               <div className="space-y-4 text-lg text-muted-foreground">
                 <p>
-                  Desde que tengo memoria, <strong className="text-primary">la búsqueda de la identidad espiritual ha sido el hilo conductor de mi vida.</strong> Crecí en un entorno religioso cristiano que despertó mi fascinación por lo divino, pero fue al salir del colegio cuando comencé realmente mi camino de búsqueda personal para conectarme con la Fuente, más allá de los sistemas y estructuras.
+                  Desde que tengo memoria, <strong className="text-violet-brand">la búsqueda de la identidad espiritual ha sido el hilo conductor de mi vida.</strong> Crecí en un entorno religioso cristiano que despertó mi fascinación por lo divino, pero fue al salir del colegio cuando comencé realmente mi camino de búsqueda personal para conectarme con la Fuente, más allá de los sistemas y estructuras.
                 </p>
                 <p>
-                  Durante años exploré diversas corrientes espirituales, tratando de llenar vacíos que ninguna parecía poder llenar por completo. El punto de quiebre llegó a través de un proceso inesperado: <strong className="text-primary">cuando llevé a mi hijo mayor a terapia por problemas de conducta, descubrí que era yo quien necesitaba un proceso profundo de transformación.</strong>
+                  Durante años exploré diversas corrientes espirituales, tratando de llenar vacíos que ninguna parecía poder llenar por completo. El punto de quiebre llegó a través de un proceso inesperado: <strong className="text-turquoise-brand">cuando llevé a mi hijo mayor a terapia por problemas de conducta, descubrí que era yo quien necesitaba un proceso profundo de transformación.</strong>
                 </p>
                 <p>
-                  Lo que comenzó como un par de sesiones para él, se convirtió en un año y medio de sanidad para mí. Fue allí donde <strong className="text-primary">rompí con estructuras religiosas limitantes y empecé el verdadero descubrimiento de quién soy.</strong>
+                  Lo que comenzó como un par de sesiones para él, se convirtió en un año y medio de sanidad para mí. Fue allí donde <strong className="text-golden-brand">rompí con estructuras religiosas limitantes y empecé el verdadero descubrimiento de quién soy.</strong>
                 </p>
               </div>
             </div>

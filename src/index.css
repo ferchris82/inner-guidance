@@ -8,49 +8,49 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Spiritual color palette */
-    --background: 250 100% 99%;
-    --foreground: 260 15% 8%;
+    /* Brand color palette - Converted from hex to HSL */
+    --background: 250 100% 99%; /* Light background */
+    --foreground: 0 0% 0%; /* Black for text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 260 15% 8%;
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 0 0% 0%; /* Black */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 260 15% 8%;
+    --popover: 0 0% 100%; /* White */
+    --popover-foreground: 0 0% 0%; /* Black */
 
-    /* Sacred purple as primary */
-    --primary: 270 60% 35%;
-    --primary-foreground: 0 0% 100%;
+    /* Indigo as primary - for backgrounds and main elements */
+    --primary: 250 82% 26%; /* #280C78 */
+    --primary-foreground: 0 0% 100%; /* White */
 
-    /* Soft lavender for secondary */
-    --secondary: 270 40% 95%;
-    --secondary-foreground: 270 60% 35%;
+    /* Turquoise green as secondary - for subtitles */
+    --secondary: 175 80% 40%; /* #13BDAE */
+    --secondary-foreground: 0 0% 100%; /* White */
 
-    --muted: 270 30% 96%;
-    --muted-foreground: 260 15% 45%;
+    --muted: 250 82% 95%; /* Light indigo */
+    --muted-foreground: 250 82% 40%; /* Medium indigo */
 
-    /* Golden accent for divine touches */
-    --accent: 45 90% 60%;
-    --accent-foreground: 260 15% 8%;
+    /* Violet as accent - for chapter titles and highlights */
+    --accent: 270 100% 66%; /* #8C52FF */
+    --accent-foreground: 0 0% 100%; /* White */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 270 20% 90%;
-    --input: 270 20% 95%;
-    --ring: 270 60% 35%;
+    --border: 250 82% 90%; /* Light indigo border */
+    --input: 250 82% 95%; /* Very light indigo input */
+    --ring: 250 82% 26%; /* Indigo ring */
 
     --radius: 0.75rem;
 
-    /* Spiritual gradients */
-    --gradient-spiritual: linear-gradient(135deg, hsl(270 60% 35%) 0%, hsl(280 80% 50%) 50%, hsl(45 90% 60%) 100%);
-    --gradient-divine: linear-gradient(180deg, hsl(270 100% 97%) 0%, hsl(280 60% 95%) 100%);
-    --gradient-peaceful: linear-gradient(45deg, hsl(270 40% 95%) 0%, hsl(0 0% 100%) 100%);
+    /* Brand gradients */
+    --gradient-spiritual: linear-gradient(135deg, hsl(250 82% 26%) 0%, hsl(270 100% 66%) 50%, hsl(175 80% 40%) 100%);
+    --gradient-divine: linear-gradient(180deg, hsl(250 82% 97%) 0%, hsl(270 100% 95%) 100%);
+    --gradient-peaceful: linear-gradient(45deg, hsl(175 80% 95%) 0%, hsl(0 0% 100%) 100%);
     
-    /* Sacred shadows */
-    --shadow-spiritual: 0 10px 40px -10px hsl(270 60% 35% / 0.3);
-    --shadow-divine: 0 0 50px hsl(45 90% 60% / 0.3);
-    --shadow-peaceful: 0 4px 20px hsl(270 30% 80% / 0.4);
+    /* Brand shadows */
+    --shadow-spiritual: 0 10px 40px -10px hsl(250 82% 26% / 0.3);
+    --shadow-divine: 0 0 50px hsl(270 100% 66% / 0.3);
+    --shadow-peaceful: 0 4px 20px hsl(175 80% 40% / 0.4);
 
     /* Typography scales */
     --font-heading: 'Playfair Display', serif;
@@ -61,59 +61,60 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    --sidebar-background: 250 82% 98%; /* Light indigo */
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-foreground: 0 0% 0%; /* Black */
 
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary: 250 82% 26%; /* Indigo */
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-primary-foreground: 0 0% 100%; /* White */
 
-    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent: 175 80% 95%; /* Light turquoise */
 
-    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-accent-foreground: 175 80% 40%; /* Turquoise */
 
-    --sidebar-border: 220 13% 91%;
+    --sidebar-border: 250 82% 90%; /* Light indigo */
 
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 270 100% 66%; /* Violet */
   }
 
   .dark {
-    --background: 260 30% 5%;
-    --foreground: 270 20% 95%;
+    --background: 250 82% 8%; /* Dark indigo */
+    --foreground: 0 0% 100%; /* White */
 
-    --card: 260 25% 8%;
-    --card-foreground: 270 20% 95%;
+    --card: 250 82% 12%; /* Darker indigo */
+    --card-foreground: 0 0% 100%; /* White */
 
-    --popover: 260 25% 8%;
-    --popover-foreground: 270 20% 95%;
+    --popover: 250 82% 12%; /* Darker indigo */
+    --popover-foreground: 0 0% 100%; /* White */
 
-    --primary: 280 80% 65%;
-    --primary-foreground: 260 30% 5%;
+    --primary: 270 100% 66%; /* Violet */
+    --primary-foreground: 250 82% 8%; /* Dark indigo */
 
-    --secondary: 270 30% 15%;
-    --secondary-foreground: 270 20% 95%;
+    --secondary: 175 80% 40%; /* Turquoise */
+    --secondary-foreground: 0 0% 100%; /* White */
 
-    --muted: 270 25% 12%;
-    --muted-foreground: 270 15% 65%;
+    --muted: 250 82% 15%; /* Dark muted indigo */
+    --muted-foreground: 250 82% 65%; /* Light indigo text */
 
-    --accent: 45 90% 70%;
-    --accent-foreground: 260 30% 5%;
+    --accent: 43 75% 45%; /* Golden yellow #C38820 */
+    --accent-foreground: 250 82% 8%; /* Dark indigo */
 
     --destructive: 0 62.8% 60%;
-    --destructive-foreground: 270 20% 95%;
+    --destructive-foreground: 0 0% 100%; /* White */
 
-    --border: 270 25% 20%;
-    --input: 270 25% 15%;
-    --ring: 280 80% 65%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 250 82% 20%; /* Dark indigo border */
+    --input: 250 82% 15%; /* Dark indigo input */
+    --ring: 270 100% 66%; /* Violet ring */
+    
+    --sidebar-background: 250 82% 10%; /* Dark indigo */
+    --sidebar-foreground: 0 0% 100%; /* White */
+    --sidebar-primary: 270 100% 66%; /* Violet */
+    --sidebar-primary-foreground: 0 0% 100%; /* White */
+    --sidebar-accent: 175 80% 20%; /* Dark turquoise */
+    --sidebar-accent-foreground: 175 80% 80%; /* Light turquoise */
+    --sidebar-border: 250 82% 20%; /* Dark indigo */
+    --sidebar-ring: 270 100% 66%; /* Violet */
   }
 }
 
@@ -165,5 +166,96 @@ All colors MUST be HSL.
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Brand-specific utility classes */
+  .bg-indigo-brand {
+    background-color: hsl(250 82% 26%);
+  }
+
+  .bg-turquoise-brand {
+    background-color: hsl(175 80% 40%);
+  }
+
+  .bg-violet-brand {
+    background-color: hsl(270 100% 66%);
+  }
+
+  .bg-golden-brand {
+    background-color: hsl(43 75% 45%);
+  }
+
+  .text-indigo-brand {
+    color: hsl(250 82% 26%);
+  }
+
+  .text-turquoise-brand {
+    color: hsl(175 80% 40%);
+  }
+
+  .text-violet-brand {
+    color: hsl(270 100% 66%);
+  }
+
+  .text-golden-brand {
+    color: hsl(43 75% 45%);
+  }
+
+  .border-indigo-brand {
+    border-color: hsl(250 82% 26%);
+  }
+
+  .border-turquoise-brand {
+    border-color: hsl(175 80% 40%);
+  }
+
+  .border-violet-brand {
+    border-color: hsl(270 100% 66%);
+  }
+
+  .border-golden-brand {
+    border-color: hsl(43 75% 45%);
+  }
+
+  /* Special brand gradients */
+  .bg-gradient-indigo-turquoise {
+    background: linear-gradient(135deg, hsl(250 82% 26%) 0%, hsl(175 80% 40%) 100%);
+  }
+
+  .bg-gradient-violet-golden {
+    background: linear-gradient(135deg, hsl(270 100% 66%) 0%, hsl(43 75% 45%) 100%);
+  }
+
+  .bg-gradient-brand-full {
+    background: linear-gradient(135deg, hsl(250 82% 26%) 0%, hsl(175 80% 40%) 25%, hsl(270 100% 66%) 50%, hsl(43 75% 45%) 75%, hsl(0 0% 100%) 100%);
+  }
+
+  /* Table and line styles using golden color */
+  .border-table-golden {
+    border-color: hsl(43 75% 45%);
+  }
+
+  .bg-table-header-golden {
+    background-color: hsl(43 75% 45% / 0.1);
+  }
+
+  /* Chapter title styles using violet */
+  .text-chapter-title {
+    color: hsl(270 100% 66%);
+    font-weight: 700;
+  }
+
+  .bg-chapter-highlight {
+    background-color: hsl(270 100% 66% / 0.1);
+  }
+
+  /* Subtitle styles using turquoise */
+  .text-subtitle-turquoise {
+    color: hsl(175 80% 40%);
+    font-weight: 600;
+  }
+
+  .bg-subtitle-bg {
+    background-color: hsl(175 80% 40% / 0.05);
   }
 }

@@ -65,23 +65,23 @@ export function HeroSection() {
       
       {/* Floating Elements */}
       <div className="absolute top-20 left-10 animate-float opacity-60">
-        <Star className="w-8 h-8 text-accent" />
+        <Star className="w-8 h-8 text-violet-brand" />
       </div>
       <div className="absolute top-40 right-20 animate-float opacity-60" style={{ animationDelay: '1s' }}>
-        <Heart className="w-6 h-6 text-primary" />
+        <Heart className="w-6 h-6 text-turquoise-brand" />
       </div>
       <div className="absolute bottom-40 left-20 animate-float opacity-60" style={{ animationDelay: '2s' }}>
-        <Star className="w-10 h-10 text-accent" />
+        <Star className="w-10 h-10 text-golden-brand" />
       </div>
 
       <div className="container mx-auto px-4 lg:px-6 text-center z-10">
         <div className="max-w-4xl mx-auto animate-fade-in">
-          <h1 className="text-5xl md:text-7xl font-heading font-bold mb-6 text-gradient-spiritual leading-tight">
+          <h1 className="text-5xl md:text-7xl font-heading font-bold mb-6 text-gradient-brand-full leading-tight">
             Mi propósito es guiarte a encontrar el tuyo
           </h1>
           
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-            Soy <span className="text-primary font-semibold">Maité Gutiérrez</span>, 
+            Soy <span className="text-violet-brand font-semibold">Maité Gutiérrez</span>, 
             monitora espiritual dedicada al crecimiento personal y desarrollo espiritual. 
             Te acompaño en tu viaje hacia el descubrimiento de tu propósito divino.
           </p>
@@ -90,7 +90,7 @@ export function HeroSection() {
             <Button 
               onClick={scrollToContact}
               size="lg"
-              className="bg-gradient-spiritual hover:shadow-spiritual transition-spiritual px-8 py-4 text-lg font-semibold animate-glow"
+              className="bg-gradient-indigo-turquoise hover:shadow-spiritual transition-spiritual px-8 py-4 text-lg font-semibold animate-glow"
             >
               Comenzar mi viaje espiritual
             </Button>
@@ -99,7 +99,7 @@ export function HeroSection() {
               onClick={scrollToNext}
               variant="outline"
               size="lg"
-              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-spiritual px-8 py-4 text-lg"
+              className="border-violet-brand text-violet-brand hover:bg-violet-brand hover:text-white transition-spiritual px-8 py-4 text-lg"
             >
               Conoce mi historia
             </Button>
@@ -123,7 +123,7 @@ export function HeroSection() {
                   className="text-center animate-slide-up hover:transform hover:scale-105 transition-all duration-300"
                   style={{ animationDelay: `${(index + 1) * 0.2}s` }}
                 >
-                  <div className="bg-gradient-spiritual p-4 rounded-full w-fit mx-auto mb-3 hover:shadow-spiritual transition-shadow">
+                  <div className="bg-gradient-violet-golden p-4 rounded-full w-fit mx-auto mb-3 hover:shadow-spiritual transition-shadow">
                     <IconComponent className="w-8 h-8 text-white" />
                   </div>
                   <div className="text-muted-foreground font-medium">{link.platform}</div>
