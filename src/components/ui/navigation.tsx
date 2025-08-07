@@ -53,6 +53,8 @@ export function Navigation() {
   const handleLogout = () => {
     logout();
     setIsAuth(false);
+    // Mostrar mensaje de confirmación
+    console.log('🚪 Sesión cerrada correctamente');
     navigate('/');
     setIsOpen(false);
   };
@@ -60,7 +62,7 @@ export function Navigation() {
   return (
     <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 lg:px-6">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14 md:h-16">
           <div className="flex items-center space-x-2">
             <h1 className="text-2xl font-heading font-bold text-gradient-spiritual">
               Maité Gutiérrez

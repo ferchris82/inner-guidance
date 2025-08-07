@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <title>Maité Gutiérrez - Monitora Espiritual | Mi propósito es guiarte a encontrar el tuyo</title>
     <meta name="description" content="Monitora Espiritual dedicada al crecimiento personal y desarrollo espiritual. Encuentra tu propósito de vida con guía profética y sabiduría transformadora." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -16,6 +19,21 @@
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="/images/transformation-journey.jpg" />
+    
+    <!-- Prevenir pull-to-refresh en admin -->
+    <style>
+      body {
+        overscroll-behavior: contain;
+      }
+      
+      /* Prevenir pull-to-refresh en móvil */
+      @media (max-width: 768px) {
+        body {
+          overscroll-behavior-y: contain;
+          -webkit-overflow-scrolling: touch;
+        }
+      }
+    </style>
   </head>
 
   <body>

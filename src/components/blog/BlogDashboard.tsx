@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BlogEditor } from './BlogEditor';
-import { BlogManager } from './BlogManager.new';
+import { BlogManager } from './BlogManager';
 import { SocialManager } from './SocialManager';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +13,8 @@ import {
   Globe
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { BlogPost, getBlogPosts } from '@/utils/blogStorage';
+import { BlogPost } from '@/lib/supabase';
+import { getBlogPosts } from '@/utils/blogSupabase';
 
 type DashboardView = 'overview' | 'editor' | 'manager' | 'social';
 
@@ -22,45 +23,72 @@ export function BlogDashboard() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [recentArticles, setRecentArticles] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Cargar artículos recientes al montar el componente
   useEffect(() => {
-    const loadRecentArticles = () => {
-      const articles = getBlogPosts();
-      // Ordenar por fecha de creación (más recientes primero) y tomar solo los primeros 3
-      const sortedArticles = articles
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 3);
-      setRecentArticles(sortedArticles);
+    const loadRecentArticles = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const articles = await getBlogPosts();
+        // Ordenar por fecha de creación (más recientes primero) y tomar solo los primeros 3
+        const sortedArticles = articles
+          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+          .slice(0, 3);
+        setRecentArticles(sortedArticles);
+      } catch (error) {
+        console.error('Error cargando artículos:', error);
+        setError('Error cargando los artículos. Intenta refrescar la página.');
+        setRecentArticles([]);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     loadRecentArticles();
 
     // Actualizar cuando cambie la vista (por si se crearon nuevos artículos)
     if (currentView === 'overview') {
-      loadRecentArticles();
+      // Usar setTimeout para evitar problemas de race condition en refresh
+      const timer = setTimeout(() => {
+        loadRecentArticles();
+      }, 100);
+      
+      return () => clearTimeout(timer);
     }
   }, [currentView]);
 
   // Escuchar cuando el botón Admin resetee el estado
   useEffect(() => {
     const checkForceReset = () => {
-      const forceReset = sessionStorage.getItem('forceReset');
-      if (forceReset === 'true') {
-        // Resetear el dashboard
+      try {
+        const forceReset = sessionStorage.getItem('forceReset');
+        if (forceReset === 'true') {
+          // Resetear el dashboard
+          setCurrentView('overview');
+          setIsEditing(false);
+          setEditingPost(null);
+          setError(null);
+          // Limpiar la bandera
+          sessionStorage.removeItem('forceReset');
+        }
+      } catch (error) {
+        console.error('Error en checkForceReset:', error);
+        // En caso de error, resetear todo a estado seguro
         setCurrentView('overview');
         setIsEditing(false);
         setEditingPost(null);
-        // Limpiar la bandera
-        sessionStorage.removeItem('forceReset');
+        setError(null);
       }
     };
 
     // Verificar al montar y después de cada navegación
     checkForceReset();
 
-    // También verificar periódicamente por si acaso
-    const interval = setInterval(checkForceReset, 100);
+    // También verificar periódicamente por si acaso, pero con menos frecuencia
+    const interval = setInterval(checkForceReset, 1000);
 
     return () => {
       clearInterval(interval);
@@ -69,12 +97,17 @@ export function BlogDashboard() {
 
   // También verificar cuando cambie la vista actual
   useEffect(() => {
-    const forceReset = sessionStorage.getItem('forceReset');
-    if (forceReset === 'true' && currentView !== 'overview') {
-      setCurrentView('overview');
-      setIsEditing(false);
-      setEditingPost(null);
-      sessionStorage.removeItem('forceReset');
+    try {
+      const forceReset = sessionStorage.getItem('forceReset');
+      if (forceReset === 'true' && currentView !== 'overview') {
+        setCurrentView('overview');
+        setIsEditing(false);
+        setEditingPost(null);
+        setError(null);
+        sessionStorage.removeItem('forceReset');
+      }
+    } catch (error) {
+      console.error('Error verificando forceReset:', error);
     }
   }, [currentView]);
 
@@ -197,6 +230,17 @@ export function BlogDashboard() {
           <p className="text-muted-foreground">
             Administra tu contenido espiritual con herramientas profesionales
           </p>
+          {error && (
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-700 text-sm">{error}</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="mt-2 text-red-600 hover:text-red-800 underline text-sm"
+              >
+                Refrescar página
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Acciones Rápidas */}
@@ -265,14 +309,19 @@ export function BlogDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {recentArticles.length > 0 ? (
+            {isLoading ? (
+              <div className="text-center py-8">
+                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Cargando artículos...</p>
+              </div>
+            ) : recentArticles.length > 0 ? (
               <div className="space-y-4">
                 {recentArticles.map((article) => (
                   <div key={article.id} className="flex items-center justify-between p-4 bg-gradient-peaceful rounded-lg">
                     <div>
                       <h4 className="font-medium line-clamp-1">{article.title}</h4>
                       <p className="text-sm text-muted-foreground">
-                        Publicado el {formatDate(article.createdAt)}
+                        Publicado el {formatDate(article.created_at)}
                       </p>
                     </div>
                     <Badge variant="outline">

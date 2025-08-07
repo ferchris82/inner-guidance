@@ -55,7 +55,7 @@ export function HeroSection() {
   return (
     <section 
       id="inicio" 
-      className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-divine"
+      className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-divine pt-14 md:pt-16"
     >
       {/* Background Image */}
       <div 
@@ -74,9 +74,9 @@ export function HeroSection() {
         <Star className="w-10 h-10 text-golden-brand" />
       </div>
 
-      <div className="container mx-auto px-4 lg:px-6 text-center z-10">
+      <div className="container mx-auto px-4 lg:px-6 text-center z-10 py-8 md:py-0">
         <div className="max-w-4xl mx-auto animate-fade-in">
-          <h1 className="text-5xl md:text-7xl font-heading font-bold mb-6 text-gradient-brand-full leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-7xl font-heading font-bold mb-6 text-gradient-brand-full leading-tight pt-4 md:pt-0">
             Mi propósito es guiarte a encontrar el tuyo
           </h1>
           

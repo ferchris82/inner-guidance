@@ -1,14 +1,22 @@
 import React, { useState, useRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Save, FileText } from 'lucide-react';
-import { saveBlogPost } from '@/utils/blogSupabase';
+import { 
+  Type, 
+  Image, 
+  Save, 
+  Eye, 
+  Settings, 
+  FileText
+} from 'lucide-react';
+import { saveBlogPost, updateBlogPost } from '@/utils/blogSupabase';
 import { BlogPost } from '@/lib/supabase';
 
 interface BlogEditorProps {
@@ -29,6 +37,7 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const quillRef = useRef<ReactQuill>(null);
 
   const handleSave = async () => {
@@ -38,19 +47,19 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
     try {
       // Validar campos requeridos
       if (!blogPost.title.trim()) {
-        setSaveMessage('El título es requerido');
+        setSaveMessage('Error: El título es requerido');
         setIsSaving(false);
         return;
       }
       
       if (!blogPost.content.trim()) {
-        setSaveMessage('El contenido es requerido');
+        setSaveMessage('Error: El contenido es requerido');
         setIsSaving(false);
         return;
       }
       
       if (!blogPost.category) {
-        setSaveMessage('Selecciona una categoría');
+        setSaveMessage('Error: Selecciona una categoría');
         setIsSaving(false);
         return;
       }
@@ -80,7 +89,7 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
       
       if (result) {
         console.log('✅ Guardado exitoso:', result);
-        setSaveMessage(`¡Artículo guardado exitosamente!`);
+        setSaveMessage('¡Artículo guardado exitosamente!');
         
         // Limpiar formulario solo si estamos creando un nuevo post
         if (!editingPost) {
@@ -113,6 +122,10 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
     }
   };
 
+  const handleEditorChange = (content: string) => {
+    setBlogPost(prev => ({ ...prev, content }));
+  };
+
   const quillModules = {
     toolbar: [
       [{ 'header': [1, 2, 3, false] }],
@@ -127,128 +140,200 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-      <div className="max-w-4xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-6"
-        >
-          <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-            <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-t-lg">
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="w-6 h-6" />
-                Editor de Blog Espiritual
-              </CardTitle>
-            </CardHeader>
-            
-            <CardContent className="p-6 space-y-4">
-              {/* Título */}
-              <div>
-                <label className="block text-sm font-medium mb-2">Título del Artículo</label>
-                <Input
-                  value={blogPost.title}
-                  onChange={(e) => setBlogPost(prev => ({ ...prev, title: e.target.value }))}
-                  placeholder="Escribe el título de tu artículo espiritual..."
-                  className="text-lg"
-                />
-              </div>
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-heading font-bold text-primary mb-2">
+            Editor Espiritual
+          </h1>
+          <p className="text-muted-foreground">
+            Crea contenido espiritual con total libertad de diseño
+          </p>
+        </div>
 
-              {/* Categoría */}
-              <div>
-                <label className="block text-sm font-medium mb-2">Categoría</label>
-                <Select
-                  value={blogPost.category}
-                  onValueChange={(value) => setBlogPost(prev => ({ ...prev, category: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona una categoría" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="llamado-divino">Llamado Divino</SelectItem>
-                    <SelectItem value="mensaje-profetico">Mensaje Profético</SelectItem>
-                    <SelectItem value="proposito-divino">Propósito Divino</SelectItem>
-                    <SelectItem value="identidad">Identidad</SelectItem>
-                    <SelectItem value="profecia">Profecía</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Panel Principal */}
+          <div className="lg:col-span-2">
+            <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    {isPreviewMode ? 'Vista Previa' : 'Editor de Contenido'}
+                  </CardTitle>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsPreviewMode(!isPreviewMode)}
+                    >
+                      {isPreviewMode ? <Settings className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {isPreviewMode ? 'Editar' : 'Vista Previa'}
+                    </Button>
+                    <Button
+                      onClick={handleSave}
+                      disabled={isSaving}
+                      className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      {isSaving ? 'Guardando...' : 'Guardar'}
+                    </Button>
+                  </div>
+                </div>
+                {saveMessage && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className={`mt-2 p-3 rounded-lg ${
+                      saveMessage.includes('Error') 
+                        ? 'bg-red-100 text-red-800 border border-red-200' 
+                        : 'bg-green-100 text-green-800 border border-green-200'
+                    }`}
+                  >
+                    {saveMessage}
+                  </motion.div>
+                )}
+              </CardHeader>
+              <CardContent>
+                {!isPreviewMode ? (
+                  <div className="space-y-6">
+                    {/* Campos básicos */}
+                    <div className="space-y-4">
+                      <Input
+                        placeholder="Título del artículo..."
+                        value={blogPost.title}
+                        onChange={(e) => setBlogPost(prev => ({ ...prev, title: e.target.value }))}
+                        className="text-2xl font-heading"
+                      />
+                      <Textarea
+                        placeholder="Resumen del artículo..."
+                        value={blogPost.excerpt}
+                        onChange={(e) => setBlogPost(prev => ({ ...prev, excerpt: e.target.value }))}
+                        rows={3}
+                      />
+                    </div>
 
-              {/* Excerpt */}
-              <div>
-                <label className="block text-sm font-medium mb-2">Resumen (Opcional)</label>
-                <Textarea
-                  value={blogPost.excerpt}
-                  onChange={(e) => setBlogPost(prev => ({ ...prev, excerpt: e.target.value }))}
-                  placeholder="Breve descripción del artículo (se generará automáticamente si se deja vacío)"
-                  rows={3}
-                />
-              </div>
+                    {/* Editor Quill */}
+                    <div className="border rounded-lg overflow-hidden">
+                      <ReactQuill
+                        ref={quillRef}
+                        value={blogPost.content}
+                        onChange={handleEditorChange}
+                        modules={quillModules}
+                        placeholder="Comparte tu mensaje espiritual..."
+                        style={{ minHeight: '300px' }}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  /* Vista Previa */
+                  <div className="prose prose-lg max-w-none">
+                    <h1>{blogPost.title}</h1>
+                    <p className="text-xl text-muted-foreground">{blogPost.excerpt}</p>
+                    <div dangerouslySetInnerHTML={{ __html: blogPost.content }} />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
 
-              {/* Tiempo de lectura */}
-              <div>
-                <label className="block text-sm font-medium mb-2">Tiempo de Lectura</label>
-                <Select
-                  value={blogPost.read_time}
-                  onValueChange={(value) => setBlogPost(prev => ({ ...prev, read_time: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="3 min">3 min</SelectItem>
-                    <SelectItem value="5 min">5 min</SelectItem>
-                    <SelectItem value="8 min">8 min</SelectItem>
-                    <SelectItem value="10 min">10 min</SelectItem>
-                    <SelectItem value="15 min">15 min</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+          {/* Panel Lateral */}
+          <div className="space-y-6">
+            {/* Configuración */}
+            <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Settings className="w-5 h-5" />
+                  Configuración
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Categoría</label>
+                  <Select 
+                    value={blogPost.category} 
+                    onValueChange={(value) => setBlogPost(prev => ({ ...prev, category: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar categoría" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="llamado-divino">Llamado Divino</SelectItem>
+                      <SelectItem value="mensaje-profetico">Mensaje Profético</SelectItem>
+                      <SelectItem value="proposito-divino">Propósito Divino</SelectItem>
+                      <SelectItem value="identidad">Identidad</SelectItem>
+                      <SelectItem value="profecia">Profecía</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              {/* Editor de contenido */}
-              <div>
-                <label className="block text-sm font-medium mb-2">Contenido del Artículo</label>
-                <div className="border rounded-lg overflow-hidden">
-                  <ReactQuill
-                    ref={quillRef}
-                    theme="snow"
-                    value={blogPost.content}
-                    onChange={(content) => setBlogPost(prev => ({ ...prev, content }))}
-                    modules={quillModules}
-                    placeholder="Comparte tu mensaje espiritual..."
-                    style={{ minHeight: '300px' }}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Tiempo de lectura</label>
+                  <Select
+                    value={blogPost.read_time}
+                    onValueChange={(value) => setBlogPost(prev => ({ ...prev, read_time: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="3 min">3 min</SelectItem>
+                      <SelectItem value="5 min">5 min</SelectItem>
+                      <SelectItem value="8 min">8 min</SelectItem>
+                      <SelectItem value="10 min">10 min</SelectItem>
+                      <SelectItem value="15 min">15 min</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Imagen destacada</label>
+                  <Input
+                    value={blogPost.featured_image}
+                    onChange={(e) => setBlogPost(prev => ({ ...prev, featured_image: e.target.value }))}
+                    placeholder="URL de la imagen"
                   />
                 </div>
-              </div>
 
-              {/* Mensajes */}
-              {saveMessage && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className={`p-3 rounded-lg ${
-                    saveMessage.includes('exitosamente') 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}
-                >
-                  {saveMessage}
-                </motion.div>
-              )}
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="featured"
+                    checked={blogPost.featured}
+                    onChange={(e) => setBlogPost(prev => ({ ...prev, featured: e.target.checked }))}
+                    className="rounded"
+                  />
+                  <label htmlFor="featured" className="text-sm font-medium">
+                    Artículo destacado
+                  </label>
+                </div>
+              </CardContent>
+            </Card>
 
-              {/* Botón guardar */}
-              <div className="flex justify-end">
-                <Button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  {isSaving ? 'Guardando...' : 'Guardar Artículo'}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+            {/* Vista previa de imagen */}
+            {blogPost.featured_image && (
+              <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Image className="w-5 h-5" />
+                    Vista Previa
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <img 
+                    src={blogPost.featured_image} 
+                    alt="Vista previa" 
+                    className="w-full h-32 object-cover rounded-lg"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/placeholder.svg';
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
