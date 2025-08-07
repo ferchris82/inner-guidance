@@ -36,12 +36,6 @@ export function Navigation() {
               Acerca de mí
             </button>
             <button 
-              onClick={() => scrollToSection('servicios')}
-              className="text-foreground hover:text-primary transition-spiritual"
-            >
-              Servicios
-            </button>
-            <button 
               onClick={() => scrollToSection('blog')}
               className="text-foreground hover:text-primary transition-spiritual"
             >
@@ -88,12 +82,6 @@ export function Navigation() {
                 className="block px-3 py-2 text-foreground hover:text-primary transition-spiritual w-full text-left"
               >
                 Acerca de mí
-              </button>
-              <button 
-                onClick={() => scrollToSection('servicios')}
-                className="block px-3 py-2 text-foreground hover:text-primary transition-spiritual w-full text-left"
-              >
-                Servicios
               </button>
               <button 
                 onClick={() => scrollToSection('blog')}

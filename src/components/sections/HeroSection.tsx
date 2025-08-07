@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowDown, Heart, Star } from "lucide-react";
+import { ArrowDown, Heart, Star, Instagram, Youtube, Facebook, MessageCircle } from "lucide-react";
 import heroImage from "@/assets/hero-spiritual.jpg";
 
 export function HeroSection() {
@@ -66,18 +66,30 @@ export function HeroSection() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
             <div className="text-center animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              <div className="text-4xl font-bold text-primary mb-2">5+</div>
-              <div className="text-muted-foreground">Años de experiencia</div>
+              <div className="bg-gradient-spiritual p-4 rounded-full w-fit mx-auto mb-3">
+                <Instagram className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-muted-foreground font-medium">Instagram</div>
             </div>
             <div className="text-center animate-slide-up" style={{ animationDelay: '0.4s' }}>
-              <div className="text-4xl font-bold text-primary mb-2">500+</div>
-              <div className="text-muted-foreground">Personas guiadas</div>
+              <div className="bg-gradient-spiritual p-4 rounded-full w-fit mx-auto mb-3">
+                <Youtube className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-muted-foreground font-medium">YouTube</div>
             </div>
             <div className="text-center animate-slide-up" style={{ animationDelay: '0.6s' }}>
-              <div className="text-4xl font-bold text-primary mb-2">100+</div>
-              <div className="text-muted-foreground">Artículos espirituales</div>
+              <div className="bg-gradient-spiritual p-4 rounded-full w-fit mx-auto mb-3">
+                <Facebook className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-muted-foreground font-medium">Facebook</div>
+            </div>
+            <div className="text-center animate-slide-up" style={{ animationDelay: '0.8s' }}>
+              <div className="bg-gradient-spiritual p-4 rounded-full w-fit mx-auto mb-3">
+                <MessageCircle className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-muted-foreground font-medium">WhatsApp</div>
             </div>
           </div>
         </div>
