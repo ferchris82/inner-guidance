@@ -1,13 +1,26 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Settings } from "lucide-react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    element?.scrollIntoView({ behavior: 'smooth' });
+    // Si estamos en admin, navegamos primero a la página principal
+    if (location.pathname === '/admin') {
+      // Navegamos a la página principal y guardamos en sessionStorage la sección objetivo
+      sessionStorage.setItem('scrollToSection', sectionId);
+      navigate('/');
+    } else {
+      // Si ya estamos en la página principal, solo hacemos scroll
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
     setIsOpen(false);
   };
 
@@ -53,6 +66,12 @@ export function Navigation() {
             >
               Contacto
             </Button>
+            <Link to="/admin">
+              <Button variant="outline" size="sm">
+                <Settings className="w-4 h-4 mr-1" />
+                Admin
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -101,6 +120,12 @@ export function Navigation() {
               >
                 Contacto
               </Button>
+              <Link to="/admin">
+                <Button variant="outline" size="sm" className="w-full mt-2">
+                  <Settings className="w-4 h-4 mr-1" />
+                  Admin
+                </Button>
+              </Link>
             </div>
           </div>
         )}

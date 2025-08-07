@@ -1,0 +1,103 @@
+/* Estilos personalizados para Quill Editor */
+
+.ql-editor {
+  min-height: 400px !important;
+  font-family: inherit !important;
+  line-height: 1.7 !important;
+  padding: 1rem !important;
+}
+
+.ql-toolbar {
+  border-top: 1px solid #e2e8f0 !important;
+  border-left: 1px solid #e2e8f0 !important;
+  border-right: 1px solid #e2e8f0 !important;
+  border-radius: 0.5rem 0.5rem 0 0 !important;
+  background-color: #f8fafc !important;
+}
+
+.ql-container {
+  border-bottom: 1px solid #e2e8f0 !important;
+  border-left: 1px solid #e2e8f0 !important;
+  border-right: 1px solid #e2e8f0 !important;
+  border-radius: 0 0 0.5rem 0.5rem !important;
+}
+
+/* Estilos para el contenido del editor */
+.ql-editor h1 {
+  font-size: 2rem !important;
+  font-weight: bold !important;
+  margin-bottom: 1rem !important;
+}
+
+.ql-editor h2 {
+  font-size: 1.5rem !important;
+  font-weight: bold !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.ql-editor h3 {
+  font-size: 1.25rem !important;
+  font-weight: bold !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.ql-editor p {
+  margin-bottom: 1rem !important;
+}
+
+.ql-editor blockquote {
+  border-left: 4px solid #3b82f6 !important;
+  padding-left: 1rem !important;
+  font-style: italic !important;
+  margin: 1rem 0 !important;
+  background-color: #f8fafc !important;
+  padding: 1rem !important;
+  border-radius: 0.25rem !important;
+}
+
+.ql-editor ul, .ql-editor ol {
+  margin-bottom: 1rem !important;
+  padding-left: 1.5rem !important;
+}
+
+.ql-editor li {
+  margin-bottom: 0.25rem !important;
+}
+
+.ql-editor a {
+  color: #3b82f6 !important;
+  text-decoration: underline !important;
+}
+
+.ql-editor a:hover {
+  color: #2563eb !important;
+}
+
+/* Estilos para la barra de herramientas */
+.ql-toolbar .ql-stroke {
+  stroke: #64748b !important;
+}
+
+.ql-toolbar .ql-fill {
+  fill: #64748b !important;
+}
+
+.ql-toolbar .ql-picker {
+  color: #64748b !important;
+}
+
+.ql-toolbar button:hover .ql-stroke,
+.ql-toolbar button:hover .ql-fill,
+.ql-toolbar button:hover .ql-picker {
+  stroke: #3b82f6 !important;
+  fill: #3b82f6 !important;
+  color: #3b82f6 !important;
+}
+
+.ql-toolbar button.ql-active .ql-stroke,
+.ql-toolbar button.ql-active .ql-fill,
+.ql-toolbar button.ql-active .ql-picker {
+  stroke: #3b82f6 !important;
+  fill: #3b82f6 !important;
+  color: #3b82f6 !important;
+}

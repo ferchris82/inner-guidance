@@ -1,6 +1,25 @@
 import { Heart, Mail, MapPin, Clock } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export function Footer() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavigation = (sectionId: string) => {
+    // Si estamos en admin, navegamos primero a la página principal
+    if (location.pathname === '/admin') {
+      // Navegamos a la página principal y guardamos en sessionStorage la sección objetivo
+      sessionStorage.setItem('scrollToSection', sectionId);
+      navigate('/');
+    } else {
+      // Si ya estamos en la página principal, solo hacemos scroll
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   return (
     <footer className="bg-primary text-primary-foreground py-16">
       <div className="container mx-auto px-4 lg:px-6">
@@ -28,7 +47,7 @@ export function Footer() {
               <ul className="space-y-2">
                 <li>
                   <button 
-                    onClick={() => document.getElementById('inicio')?.scrollIntoView({ behavior: 'smooth' })}
+                    onClick={() => handleNavigation('inicio')}
                     className="text-primary-foreground/80 hover:text-accent transition-spiritual"
                   >
                     Inicio
@@ -36,7 +55,7 @@ export function Footer() {
                 </li>
                 <li>
                   <button 
-                    onClick={() => document.getElementById('acerca')?.scrollIntoView({ behavior: 'smooth' })}
+                    onClick={() => handleNavigation('acerca')}
                     className="text-primary-foreground/80 hover:text-accent transition-spiritual"
                   >
                     Acerca de mí
@@ -44,15 +63,7 @@ export function Footer() {
                 </li>
                 <li>
                   <button 
-                    onClick={() => document.getElementById('servicios')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="text-primary-foreground/80 hover:text-accent transition-spiritual"
-                  >
-                    Servicios
-                  </button>
-                </li>
-                <li>
-                  <button 
-                    onClick={() => document.getElementById('blog')?.scrollIntoView({ behavior: 'smooth' })}
+                    onClick={() => handleNavigation('blog')}
                     className="text-primary-foreground/80 hover:text-accent transition-spiritual"
                   >
                     Blog
@@ -60,10 +71,18 @@ export function Footer() {
                 </li>
                 <li>
                   <button 
-                    onClick={() => document.getElementById('recursos')?.scrollIntoView({ behavior: 'smooth' })}
+                    onClick={() => handleNavigation('recursos')}
                     className="text-primary-foreground/80 hover:text-accent transition-spiritual"
                   >
                     Recursos
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => handleNavigation('contacto')}
+                    className="text-primary-foreground/80 hover:text-accent transition-spiritual"
+                  >
+                    Contacto
                   </button>
                 </li>
               </ul>
