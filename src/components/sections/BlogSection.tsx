@@ -91,7 +91,7 @@ export function BlogSection() {
       <section id="blog" className="py-20 bg-gradient-peaceful">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-gradient-spiritual">
+            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-primary">
               Blog Espiritual
             </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
@@ -127,7 +127,7 @@ export function BlogSection() {
         <div className="container mx-auto px-4 lg:px-6">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16 animate-fade-in">
-              <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-gradient-spiritual">
+              <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-primary">
                 Blog Espiritual
               </h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">

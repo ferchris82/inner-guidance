@@ -1,12 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Settings } from "lucide-react";
+import { Menu, X, Settings, LogOut } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { isAuthenticated, logout } from "@/utils/auth";
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Verificar autenticación al montar y cuando cambie la ruta
+  useEffect(() => {
+    const checkAuth = () => {
+      setIsAuth(isAuthenticated());
+    };
+    
+    checkAuth();
+    
+    // Verificar periódicamente
+    const interval = setInterval(checkAuth, 30000); // cada 30 segundos
+    
+    return () => clearInterval(interval);
+  }, [location.pathname]);
 
   const scrollToSection = (sectionId: string) => {
     // Si estamos en admin, navegamos primero a la página principal
@@ -31,6 +47,13 @@ export function Navigation() {
     // Agregar bandera temporal para forzar reset del dashboard
     sessionStorage.setItem('forceReset', 'true');
     navigate('/admin');
+    setIsOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsAuth(false);
+    navigate('/');
     setIsOpen(false);
   };
 
@@ -76,14 +99,27 @@ export function Navigation() {
             >
               Contacto
             </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={handleAdminNavigation}
-            >
-              <Settings className="w-4 h-4 mr-1" />
-              Admin
-            </Button>
+            {/* Botones de Admin/Logout */}
+            {isAuth ? (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleLogout}
+                className="text-red-600 border-red-600 hover:bg-red-50"
+              >
+                <LogOut className="w-4 h-4 mr-1" />
+                Cerrar Sesión
+              </Button>
+            ) : (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleAdminNavigation}
+              >
+                <Settings className="w-4 h-4 mr-1" />
+                Admin
+              </Button>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -132,15 +168,28 @@ export function Navigation() {
               >
                 Contacto
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full mt-2"
-                onClick={handleAdminNavigation}
-              >
-                <Settings className="w-4 h-4 mr-1" />
-                Admin
-              </Button>
+              {/* Botones de Admin/Logout para móvil */}
+              {isAuth ? (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full mt-2 text-red-600 border-red-600 hover:bg-red-50"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="w-4 h-4 mr-1" />
+                  Cerrar Sesión
+                </Button>
+              ) : (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full mt-2"
+                  onClick={handleAdminNavigation}
+                >
+                  <Settings className="w-4 h-4 mr-1" />
+                  Admin
+                </Button>
+              )}
             </div>
           </div>
         )}

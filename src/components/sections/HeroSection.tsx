@@ -1,11 +1,50 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowDown, Heart, Star, Instagram, Youtube, Facebook, MessageCircle } from "lucide-react";
+import { ArrowDown, Heart, Star, Instagram, Youtube, Facebook, MessageCircle, Twitter, Linkedin, Globe } from "lucide-react";
 import heroImage from "@/assets/hero-spiritual.jpg";
+import { getActiveSocialLinks, SocialLink } from "@/utils/socialStorage";
 
 export function HeroSection() {
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+
+  // Cargar redes sociales al montar el componente
+  useEffect(() => {
+    const loadSocialLinks = () => {
+      const links = getActiveSocialLinks();
+      setSocialLinks(links);
+    };
+    
+    loadSocialLinks();
+    
+    // Escuchar cambios en las redes sociales
+    const handleSocialLinksUpdate = () => {
+      loadSocialLinks();
+    };
+    
+    window.addEventListener('socialLinksUpdated', handleSocialLinksUpdate);
+    
+    return () => {
+      window.removeEventListener('socialLinksUpdated', handleSocialLinksUpdate);
+    };
+  }, []);
+
   const scrollToNext = () => {
     const element = document.getElementById('acerca');
     element?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Función para obtener el icono correspondiente
+  const getIconComponent = (iconName: string) => {
+    const icons: { [key: string]: React.ComponentType<{ className?: string }> } = {
+      'Instagram': Instagram,
+      'Youtube': Youtube,
+      'Facebook': Facebook,
+      'MessageCircle': MessageCircle,
+      'Twitter': Twitter,
+      'Linkedin': Linkedin,
+      'Globe': Globe,
+    };
+    return icons[iconName] || Globe;
   };
 
   const scrollToContact = () => {
@@ -66,31 +105,41 @@ export function HeroSection() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-            <div className="text-center animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              <div className="bg-gradient-spiritual p-4 rounded-full w-fit mx-auto mb-3">
-                <Instagram className="w-8 h-8 text-white" />
+          <div className={`grid gap-6 max-w-4xl mx-auto justify-items-center ${
+            socialLinks.length === 1 ? 'grid-cols-1' :
+            socialLinks.length === 2 ? 'grid-cols-1 md:grid-cols-2' :
+            socialLinks.length === 3 ? 'grid-cols-1 md:grid-cols-3' :
+            socialLinks.length >= 4 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4' :
+            'grid-cols-1 md:grid-cols-4'
+          }`}>
+            {socialLinks.map((link, index) => {
+              const IconComponent = getIconComponent(link.icon);
+              return (
+                <a 
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-center animate-slide-up hover:transform hover:scale-105 transition-all duration-300"
+                  style={{ animationDelay: `${(index + 1) * 0.2}s` }}
+                >
+                  <div className="bg-gradient-spiritual p-4 rounded-full w-fit mx-auto mb-3 hover:shadow-spiritual transition-shadow">
+                    <IconComponent className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="text-muted-foreground font-medium">{link.platform}</div>
+                </a>
+              );
+            })}
+            
+            {socialLinks.length === 0 && (
+              <div className="col-span-full text-center py-8">
+                <div className="text-muted-foreground">
+                  <Globe className="w-12 h-12 mx-auto mb-2 opacity-30" />
+                  <p className="text-sm opacity-70">Conéctate conmigo en mis redes sociales</p>
+                  <p className="text-xs opacity-50 mt-1">Pronto estarán disponibles</p>
+                </div>
               </div>
-              <div className="text-muted-foreground font-medium">Instagram</div>
-            </div>
-            <div className="text-center animate-slide-up" style={{ animationDelay: '0.4s' }}>
-              <div className="bg-gradient-spiritual p-4 rounded-full w-fit mx-auto mb-3">
-                <Youtube className="w-8 h-8 text-white" />
-              </div>
-              <div className="text-muted-foreground font-medium">YouTube</div>
-            </div>
-            <div className="text-center animate-slide-up" style={{ animationDelay: '0.6s' }}>
-              <div className="bg-gradient-spiritual p-4 rounded-full w-fit mx-auto mb-3">
-                <Facebook className="w-8 h-8 text-white" />
-              </div>
-              <div className="text-muted-foreground font-medium">Facebook</div>
-            </div>
-            <div className="text-center animate-slide-up" style={{ animationDelay: '0.8s' }}>
-              <div className="bg-gradient-spiritual p-4 rounded-full w-fit mx-auto mb-3">
-                <MessageCircle className="w-8 h-8 text-white" />
-              </div>
-              <div className="text-muted-foreground font-medium">WhatsApp</div>
-            </div>
+            )}
           </div>
         </div>
       </div>

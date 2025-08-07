@@ -2,18 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BlogEditor } from './BlogEditor';
 import { BlogManager } from './BlogManager.new';
+import { SocialManager } from './SocialManager';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   FileText, 
   Edit3, 
   Plus,
-  ArrowLeft
+  ArrowLeft,
+  Globe
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { BlogPost, getBlogPosts } from '@/utils/blogStorage';
 
-type DashboardView = 'overview' | 'editor' | 'manager';
+type DashboardView = 'overview' | 'editor' | 'manager' | 'social';
 
 export function BlogDashboard() {
   const [currentView, setCurrentView] = useState<DashboardView>('overview');
@@ -100,6 +102,12 @@ export function BlogDashboard() {
     setEditingPost(null);
   };
 
+  const handleSocialManager = () => {
+    setCurrentView('social');
+    setIsEditing(false);
+    setEditingPost(null);
+  };
+
   // Función para formatear la fecha
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -158,6 +166,26 @@ export function BlogDashboard() {
     );
   }
 
+  if (currentView === 'social') {
+    return (
+      <div className="min-h-screen bg-gradient-peaceful">
+        <div className="p-4">
+          <Button
+            variant="ghost"
+            onClick={handleBackToOverview}
+            className="mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver al Dashboard
+          </Button>
+        </div>
+        <div className="max-w-6xl mx-auto p-4">
+          <SocialManager />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-peaceful p-6">
       <div className="max-w-7xl mx-auto">
@@ -172,7 +200,7 @@ export function BlogDashboard() {
         </div>
 
         {/* Acciones Rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -204,6 +232,24 @@ export function BlogDashboard() {
                 <h3 className="text-lg font-medium mb-2">Gestionar Artículos</h3>
                 <p className="text-sm text-muted-foreground">
                   Edita, organiza y administra tus publicaciones
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Card 
+              className="shadow-peaceful hover:shadow-spiritual transition-spiritual cursor-pointer"
+              onClick={handleSocialManager}
+            >
+              <CardContent className="p-6 text-center">
+                <Globe className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">Redes Sociales</h3>
+                <p className="text-sm text-muted-foreground">
+                  Configura los enlaces a tus redes sociales
                 </p>
               </CardContent>
             </Card>
