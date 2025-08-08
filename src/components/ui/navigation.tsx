@@ -63,8 +63,15 @@ export function Navigation() {
     <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 lg:px-6">
         <div className="flex items-center justify-between h-14 md:h-16">
-          <div className="flex items-center space-x-2">
-                        <h1 className="text-2xl font-heading font-bold text-primary">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-accent/20 rounded-xl shadow-sm flex items-center justify-center border border-accent/30">
+              <img 
+                src="/favicon.svg" 
+                alt="Guía Interior - Logo" 
+                className="w-10 h-10 object-contain"
+              />
+            </div>
+            <h1 className="text-2xl font-heading font-bold text-primary">
               Guía Interior
             </h1>
           </div>

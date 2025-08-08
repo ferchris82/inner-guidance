@@ -360,13 +360,13 @@ export function BlogSection() {
               {/* Featured Image */}
               {articles[selectedArticle].featured_image && (
                 <div className="mb-8">
-                  <div className="relative aspect-video rounded-2xl overflow-hidden shadow-spiritual">
+                  <div className="relative rounded-2xl overflow-hidden shadow-spiritual">
                     <img 
                       src={articles[selectedArticle].featured_image} 
                       alt={`Imagen del artículo: ${articles[selectedArticle].title}`}
-                      className="w-full h-full object-cover"
+                      className="w-full h-auto object-contain max-h-96"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
                   </div>
                 </div>
               )}
