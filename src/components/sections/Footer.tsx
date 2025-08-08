@@ -1,9 +1,54 @@
+import { useState } from "react";
 import { Mail, MapPin, Clock } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useToast } from '@/hooks/use-toast';
+import { subscribeToNewsletter } from '@/services/newsletterSupabase';
 
 export function Footer() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [footerEmail, setFooterEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  // Manejar suscripción desde el footer
+  const handleFooterNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!footerEmail || !footerEmail.includes('@')) {
+      toast({
+        title: "Email inválido",
+        description: "Por favor ingresa un email válido",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const result = await subscribeToNewsletter(footerEmail, 'footer');
+      
+      if (result) {
+        toast({
+          title: "¡Te has suscrito exitosamente! 🙏",
+          description: "Recibirás reflexiones espirituales semanalmente en tu correo.",
+        });
+        setFooterEmail(''); // Limpiar el campo
+      } else {
+        throw new Error('Error en la suscripción');
+      }
+    } catch (error) {
+      console.error('Error suscribiendo desde footer:', error);
+      toast({
+        title: "Error en la suscripción",
+        description: "Hubo un problema. Por favor intenta de nuevo más tarde.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleNavigation = (sectionId: string) => {
     // Si estamos en admin, navegamos primero a la página principal
@@ -116,16 +161,24 @@ export function Footer() {
             <p className="text-primary-foreground/80 mb-4">
               Recibe contenido inspirador y guía profética directamente en tu correo.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3">
+            <form onSubmit={handleFooterNewsletterSubmit} className="flex flex-col sm:flex-row gap-3">
               <input 
                 type="email" 
                 placeholder="Tu correo electrónico"
-                className="flex-1 px-4 py-2 rounded-lg bg-background text-foreground border border-border"
+                value={footerEmail}
+                onChange={(e) => setFooterEmail(e.target.value)}
+                required
+                disabled={isSubmitting}
+                className="flex-1 px-4 py-2 rounded-lg bg-background text-foreground border border-border disabled:opacity-50"
               />
-              <button className="px-6 py-2 bg-accent text-accent-foreground rounded-lg hover:bg-accent/90 transition-spiritual font-medium">
-                Suscribirme
+              <button 
+                type="submit"
+                disabled={isSubmitting}
+                className="px-6 py-2 bg-accent text-accent-foreground rounded-lg hover:bg-accent/90 transition-spiritual font-medium disabled:opacity-50"
+              >
+                {isSubmitting ? 'Suscribiendo...' : 'Suscribirme'}
               </button>
-            </div>
+            </form>
           </div>
 
           {/* Bottom Bar */}

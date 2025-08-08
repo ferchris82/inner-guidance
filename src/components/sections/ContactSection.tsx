@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Mail, Phone, MapPin, Send, Heart, Clock } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { saveContactMessage } from "@/services/contactSupabase";
 
 export function ContactSection() {
   const [formData, setFormData] = useState({
@@ -16,19 +17,59 @@ export function ContactSection() {
     message: ''
   });
   
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Simulate form submission
-    toast({
-      title: "Mensaje enviado exitosamente",
-      description: "Me pondré en contacto contigo dentro de las próximas 24 horas.",
-    });
+    // Validar campos requeridos
+    if (!formData.name || !formData.email || !formData.message) {
+      toast({
+        title: "Error en el formulario",
+        description: "Por favor completa todos los campos requeridos (nombre, email y mensaje).",
+        variant: "destructive"
+      });
+      return;
+    }
     
-    // Reset form
-    setFormData({ name: '', email: '', service: '', message: '' });
+    setIsSubmitting(true);
+    
+    try {
+      // Guardar en Supabase
+      const savedMessage = await saveContactMessage({
+        name: formData.name,
+        email: formData.email,
+        service: formData.service || 'Sin especificar',
+        message: formData.message
+      });
+
+      if (savedMessage) {
+        toast({
+          title: "¡Mensaje enviado exitosamente! 🙏",
+          description: "Gracias por contactarme. Me pondré en contacto contigo dentro de las próximas 24 horas.",
+        });
+        
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          service: '',
+          message: ''
+        });
+      } else {
+        throw new Error('Error al guardar el mensaje');
+      }
+    } catch (error) {
+      console.error('Error al enviar mensaje:', error);
+      toast({
+        title: "Error al enviar mensaje",
+        description: "Hubo un problema al enviar tu mensaje. Por favor intenta de nuevo o contacta directamente por email.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -124,11 +165,12 @@ export function ContactSection() {
 
                     <Button 
                       type="submit"
-                      className="w-full bg-gradient-golden hover:shadow-spiritual transition-spiritual"
+                      disabled={isSubmitting}
+                      className="w-full bg-gradient-golden hover:shadow-spiritual transition-spiritual disabled:opacity-50"
                       size="lg"
                     >
                       <Send className="w-5 h-5 mr-2 text-white" />
-                      Enviar mensaje
+                      {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
                     </Button>
                   </form>
                 </CardContent>
@@ -208,7 +250,13 @@ export function ContactSection() {
                     Si atraviesas una situación espiritual que requiere oración inmediata, 
                     puedes escribirme directamente.
                   </p>
-                  <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-spiritual">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      window.open('https://wa.me/57313765304?text=Hola%20Maité,%20necesito%20oración%20urgente%20por%20favor', '_blank');
+                    }}
+                    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-spiritual"
+                  >
                     <Heart className="w-4 h-4 mr-2 icon-golden-gradient" />
                     Solicitar oración
                   </Button>
@@ -230,6 +278,12 @@ export function ContactSection() {
               <Button 
                 size="lg"
                 variant="secondary"
+                onClick={() => {
+                  const element = document.getElementById('blog');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
                 className="bg-white text-primary hover:bg-white/90 transition-spiritual px-8 py-4"
               >
                 Comenzar ahora

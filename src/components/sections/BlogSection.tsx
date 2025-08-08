@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, ArrowRight, BookOpen, X, Share2, ArrowLeft, Clock, User, Plus } from "lucide-react";
+import { Calendar, ArrowRight, BookOpen, X, Share2, ArrowLeft, Clock, User, Plus, Sparkles } from "lucide-react";
 import { getBlogPosts } from "@/utils/blogSupabase";
 import { BlogPost } from "@/lib/supabase";
+import { isAuthenticated } from "@/utils/auth";
 
 export function BlogSection() {
   const [selectedArticle, setSelectedArticle] = useState<number | null>(null);
@@ -112,6 +113,9 @@ export function BlogSection() {
     );
   }
 
+  // Verificar si el usuario es admin
+  const userIsAdmin = isAuthenticated();
+
   if (articles.length === 0) {
     return (
       <section id="blog" className="py-20 bg-gradient-peaceful">
@@ -121,26 +125,48 @@ export function BlogSection() {
               Blog Espiritual
             </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              ¡Bienvenido a tu espacio espiritual! Aquí compartirás reflexiones proféticas, 
-              enseñanzas bíblicas y revelaciones para el crecimiento en el Reino de Dios.
+              Reflexiones proféticas, enseñanzas bíblicas y revelaciones espirituales 
+              para el crecimiento en el Reino de Dios.
             </p>
-            <div className="mb-8">
-              <BookOpen className="w-24 h-24 text-muted-foreground mx-auto mb-4 opacity-50 icon-golden-gradient" />
-              <h3 className="text-2xl font-heading font-bold mb-4 text-primary">
-                Comienza tu ministerio de escritura
-              </h3>
-              <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-                Crea tu primer artículo y comparte la palabra que Dios ha puesto en tu corazón.
-              </p>
-              <Button 
-                onClick={handleNavigateToEditor}
-                size="lg"
-                className="bg-gradient-golden hover:shadow-spiritual transition-spiritual"
-              >
-                <Plus className="w-5 h-5 mr-2 text-white" />
-                Crear Mi Primer Artículo
-              </Button>
-            </div>
+            
+            {userIsAdmin ? (
+              // Vista para Admin - Puede crear artículos
+              <div className="mb-8">
+                <BookOpen className="w-24 h-24 text-muted-foreground mx-auto mb-4 opacity-50 icon-golden-gradient" />
+                <h3 className="text-2xl font-heading font-bold mb-4 text-primary">
+                  Comienza tu ministerio de escritura
+                </h3>
+                <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
+                  Crea tu primer artículo y comparte la palabra que Dios ha puesto en tu corazón.
+                </p>
+                <Button 
+                  onClick={handleNavigateToEditor}
+                  size="lg"
+                  className="bg-gradient-golden hover:shadow-spiritual transition-spiritual"
+                >
+                  <Plus className="w-5 h-5 mr-2 text-white" />
+                  Crear Mi Primer Artículo
+                </Button>
+              </div>
+            ) : (
+              // Vista para Visitantes - Mensaje de contenido próximo
+              <div className="mb-8">
+                <Sparkles className="w-24 h-24 text-muted-foreground mx-auto mb-4 opacity-50 icon-golden-gradient" />
+                <h3 className="text-2xl font-heading font-bold mb-4 text-primary">
+                  Contenido espiritual próximamente
+                </h3>
+                <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
+                  Estamos preparando contenido inspirador y revelaciones proféticas para ti. 
+                  ¡Suscríbete al newsletter para ser el primero en recibir nuestras publicaciones!
+                </p>
+                <div className="bg-gradient-divine p-6 rounded-xl max-w-md mx-auto">
+                  <p className="text-sm text-muted-foreground">
+                    💫 Próximamente compartiremos enseñanzas sobre el propósito divino, 
+                    identidad en Cristo y el llamado profético.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>

@@ -1,9 +1,55 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, Play, BookOpen, FileText, Video, Headphones } from "lucide-react";
+import { useToast } from '@/hooks/use-toast';
+import { subscribeToNewsletter } from '@/services/newsletterSupabase';
 
 export function ResourcesSection() {
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  // Manejar suscripción al newsletter
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!newsletterEmail || !newsletterEmail.includes('@')) {
+      toast({
+        title: "Email inválido",
+        description: "Por favor ingresa un email válido",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const result = await subscribeToNewsletter(newsletterEmail, 'resources-section');
+      
+      if (result) {
+        toast({
+          title: "¡Suscripción exitosa! 🙏",
+          description: "Gracias por unirte a nuestra comunidad espiritual. Recibirás contenido inspirador semanalmente.",
+        });
+        setNewsletterEmail(''); // Limpiar el campo
+      } else {
+        throw new Error('Error en la suscripción');
+      }
+    } catch (error) {
+      console.error('Error suscribiendo:', error);
+      toast({
+        title: "Error en la suscripción",
+        description: "Hubo un problema. Por favor intenta de nuevo más tarde.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const resources = [
     {
       icon: FileText,
@@ -131,16 +177,24 @@ export function ResourcesSection() {
                 Únete a nuestra comunidad y recibe semanalmente reflexiones proféticas, 
                 estudios bíblicos y recursos para tu crecimiento espiritual.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+              <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                 <input 
                   type="email" 
                   placeholder="Tu correo electrónico"
-                  className="flex-1 px-4 py-3 rounded-lg border border-border bg-background"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  required
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-3 rounded-lg border border-border bg-background disabled:opacity-50"
                 />
-                <Button className="bg-gradient-spiritual hover:shadow-spiritual transition-spiritual px-8">
-                  Suscribirme
+                <Button 
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-gradient-spiritual hover:shadow-spiritual transition-spiritual px-8 disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Suscribiendo...' : 'Suscribirme'}
                 </Button>
-              </div>
+              </form>
               <p className="text-xs text-muted-foreground mt-4">
                 No spam. Puedes cancelar tu suscripción en cualquier momento.
               </p>
