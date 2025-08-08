@@ -40,7 +40,7 @@ export function ContactSection() {
       <div className="container mx-auto px-4 lg:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-gradient-spiritual">
+            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-primary">
               Comienza tu viaje espiritual
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -55,7 +55,7 @@ export function ContactSection() {
               <Card className="shadow-spiritual">
                 <CardHeader>
                   <CardTitle className="text-2xl font-heading text-primary flex items-center">
-                    <Heart className="w-6 h-6 mr-2 text-accent" />
+                    <Heart className="w-6 h-6 mr-2 icon-golden-gradient" />
                     Envíame un mensaje
                   </CardTitle>
                 </CardHeader>
@@ -124,10 +124,10 @@ export function ContactSection() {
 
                     <Button 
                       type="submit"
-                      className="w-full bg-gradient-spiritual hover:shadow-spiritual transition-spiritual"
+                      className="w-full bg-gradient-golden hover:shadow-spiritual transition-spiritual"
                       size="lg"
                     >
-                      <Send className="w-5 h-5 mr-2" />
+                      <Send className="w-5 h-5 mr-2 text-white" />
                       Enviar mensaje
                     </Button>
                   </form>
@@ -141,7 +141,7 @@ export function ContactSection() {
                 <Card className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
-                      <div className="bg-gradient-spiritual p-3 rounded-full">
+                      <div className="bg-gradient-golden p-3 rounded-full">
                         <Mail className="w-6 h-6 text-white" />
                       </div>
                       <div>
@@ -149,7 +149,7 @@ export function ContactSection() {
                           Correo Electrónico
                         </h3>
                         <p className="text-muted-foreground">
-                          maite.monitora@gmail.com
+                          maitegutierrez.monitora@gmail.com
                         </p>
                         <p className="text-sm text-muted-foreground mt-1">
                           Respondo dentro de 24 horas
@@ -162,7 +162,7 @@ export function ContactSection() {
                 <Card className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
-                      <div className="bg-gradient-spiritual p-3 rounded-full">
+                      <div className="bg-gradient-golden p-3 rounded-full">
                         <Clock className="w-6 h-6 text-white" />
                       </div>
                       <div>
@@ -182,7 +182,7 @@ export function ContactSection() {
                 <Card className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
-                      <div className="bg-gradient-spiritual p-3 rounded-full">
+                      <div className="bg-gradient-golden p-3 rounded-full">
                         <MapPin className="w-6 h-6 text-white" />
                       </div>
                       <div>
@@ -209,7 +209,7 @@ export function ContactSection() {
                     puedes escribirme directamente.
                   </p>
                   <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-spiritual">
-                    <Heart className="w-4 h-4 mr-2" />
+                    <Heart className="w-4 h-4 mr-2 icon-golden-gradient" />
                     Solicitar oración
                   </Button>
                 </div>

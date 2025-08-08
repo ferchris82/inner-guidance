@@ -65,18 +65,18 @@ export function HeroSection() {
       
       {/* Floating Elements */}
       <div className="absolute top-20 left-10 animate-float opacity-60">
-        <Star className="w-8 h-8 text-violet-brand" />
+        <Star className="w-8 h-8 icon-golden-gradient" />
       </div>
       <div className="absolute top-40 right-20 animate-float opacity-60" style={{ animationDelay: '1s' }}>
-        <Heart className="w-6 h-6 text-turquoise-brand" />
+        <Heart className="w-6 h-6 icon-golden-gradient" />
       </div>
       <div className="absolute bottom-40 left-20 animate-float opacity-60" style={{ animationDelay: '2s' }}>
-        <Star className="w-10 h-10 text-golden-brand" />
+        <Star className="w-10 h-10 icon-golden-gradient" />
       </div>
 
       <div className="container mx-auto px-4 lg:px-6 text-center z-10 py-8 md:py-0">
         <div className="max-w-4xl mx-auto animate-fade-in">
-          <h1 className="text-3xl sm:text-4xl md:text-7xl font-heading font-bold mb-6 text-gradient-brand-full leading-tight pt-4 md:pt-0">
+          <h1 className="text-3xl sm:text-4xl md:text-7xl font-heading font-bold mb-6 text-primary leading-tight pt-4 md:pt-0">
             Mi propósito es guiarte a encontrar el tuyo
           </h1>
           
@@ -90,7 +90,7 @@ export function HeroSection() {
             <Button 
               onClick={scrollToContact}
               size="lg"
-              className="bg-gradient-indigo-turquoise hover:shadow-spiritual transition-spiritual px-8 py-4 text-lg font-semibold animate-glow"
+              className="bg-gradient-golden hover:shadow-spiritual transition-spiritual px-8 py-4 text-lg font-semibold animate-glow"
             >
               Comenzar mi viaje espiritual
             </Button>
@@ -134,7 +134,7 @@ export function HeroSection() {
             {socialLinks.length === 0 && (
               <div className="col-span-full text-center py-8">
                 <div className="text-muted-foreground">
-                  <Globe className="w-12 h-12 mx-auto mb-2 opacity-30" />
+                  <Globe className="w-12 h-12 mx-auto mb-2 opacity-30 icon-golden-gradient" />
                   <p className="text-sm opacity-70">Conéctate conmigo en mis redes sociales</p>
                   <p className="text-xs opacity-50 mt-1">Pronto estarán disponibles</p>
                 </div>
@@ -150,7 +150,7 @@ export function HeroSection() {
           onClick={scrollToNext}
           className="text-muted-foreground hover:text-primary transition-spiritual"
         >
-          <ArrowDown className="w-6 h-6" />
+          <ArrowDown className="w-6 h-6 icon-golden-gradient" />
         </button>
       </div>
     </section>

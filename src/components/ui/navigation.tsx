@@ -64,8 +64,8 @@ export function Navigation() {
       <div className="container mx-auto px-4 lg:px-6">
         <div className="flex items-center justify-between h-14 md:h-16">
           <div className="flex items-center space-x-2">
-            <h1 className="text-2xl font-heading font-bold text-gradient-spiritual">
-              Maité Gutiérrez
+                        <h1 className="text-2xl font-heading font-bold text-primary">
+              Guía Interior
             </h1>
           </div>
 
@@ -91,7 +91,7 @@ export function Navigation() {
             </button>
             <Button 
               onClick={() => scrollToSection('contacto')}
-              className="bg-gradient-spiritual hover:shadow-spiritual transition-spiritual"
+              className="bg-gradient-golden hover:shadow-spiritual transition-spiritual"
             >
               Contacto
             </Button>
@@ -164,7 +164,7 @@ export function Navigation() {
               </button>
               <Button 
                 onClick={() => scrollToSection('contacto')}
-                className="w-full mt-2 bg-gradient-spiritual hover:shadow-spiritual transition-spiritual"
+                className="w-full mt-2 bg-gradient-golden hover:shadow-spiritual transition-spiritual"
               >
                 Contacto
               </Button>

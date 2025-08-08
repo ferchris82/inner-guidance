@@ -125,7 +125,7 @@ export function BlogSection() {
               enseñanzas bíblicas y revelaciones para el crecimiento en el Reino de Dios.
             </p>
             <div className="mb-8">
-              <BookOpen className="w-24 h-24 text-muted-foreground mx-auto mb-4 opacity-50" />
+              <BookOpen className="w-24 h-24 text-muted-foreground mx-auto mb-4 opacity-50 icon-golden-gradient" />
               <h3 className="text-2xl font-heading font-bold mb-4 text-primary">
                 Comienza tu ministerio de escritura
               </h3>
@@ -135,9 +135,9 @@ export function BlogSection() {
               <Button 
                 onClick={handleNavigateToEditor}
                 size="lg"
-                className="bg-gradient-spiritual hover:shadow-spiritual transition-spiritual"
+                className="bg-gradient-golden hover:shadow-spiritual transition-spiritual"
               >
-                <Plus className="w-5 h-5 mr-2" />
+                <Plus className="w-5 h-5 mr-2 text-white" />
                 Crear Mi Primer Artículo
               </Button>
             </div>
@@ -177,7 +177,7 @@ export function BlogSection() {
                       </p>
                       <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-6 flex-wrap">
                         <div className="flex items-center space-x-1">
-                          <Calendar className="w-4 h-4" />
+                          <Calendar className="w-4 h-4 icon-golden-gradient" />
                           <span>{formatDate(articles[0].created_at)}</span>
                         </div>
                         <Badge variant="outline">{getCategoryName(articles[0].category)}</Badge>
@@ -188,7 +188,7 @@ export function BlogSection() {
                         className="bg-gradient-spiritual hover:shadow-spiritual transition-spiritual"
                       >
                         Leer artículo completo
-                        <ArrowRight className="w-4 h-4 ml-2" />
+                        <ArrowRight className="w-4 h-4 ml-2 icon-golden-gradient" />
                       </Button>
                     </div>
                     <div className="md:w-1/3 bg-gradient-spiritual flex items-center justify-center p-8 relative overflow-hidden">
@@ -199,7 +199,7 @@ export function BlogSection() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                       <div className="relative z-10 text-center text-white">
-                        <BookOpen className="w-16 h-16 mx-auto mb-2 opacity-80" />
+                        <BookOpen className="w-16 h-16 mx-auto mb-2 opacity-80 icon-golden-gradient" />
                         <p className="text-sm font-medium">Transformación Espiritual</p>
                       </div>
                     </div>
@@ -236,7 +236,7 @@ export function BlogSection() {
                       </p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                          <Calendar className="w-3 h-3" />
+                          <Calendar className="w-3 h-3 icon-golden-gradient" />
                           <span>{formatDate(article.created_at)}</span>
                         </div>
                         <Button 
@@ -246,7 +246,7 @@ export function BlogSection() {
                           onClick={() => openArticle(index + 1)}
                         >
                           Leer más
-                          <ArrowRight className="w-3 h-3 ml-1" />
+                          <ArrowRight className="w-3 h-3 ml-1 icon-golden-gradient" />
                         </Button>
                       </div>
                     </CardContent>

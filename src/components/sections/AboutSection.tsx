@@ -10,7 +10,7 @@ export function AboutSection() {
         <div className="max-w-6xl mx-auto">
           {/* Header Section */}
           <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-gradient-brand-full">
+            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-primary">
               Acerca de mí
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -38,7 +38,7 @@ export function AboutSection() {
 
             {/* Story Section */}
             <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              <h3 className="text-3xl font-heading font-bold mb-6 text-chapter-title">
+              <h3 className="text-3xl font-heading font-bold mb-6 text-primary">
                 Mi Historia Espiritual
               </h3>
               <div className="space-y-4 text-lg text-muted-foreground">
@@ -96,7 +96,7 @@ export function AboutSection() {
               </div>
               <div className="text-center mt-4">
                 <p className="text-muted-foreground text-sm">
-                  <Play className="w-4 h-4 inline mr-1" />
+                  <Play className="w-4 h-4 inline mr-1 icon-golden-gradient" />
                   Haz clic para reproducir y conocer más sobre mi misión espiritual
                 </p>
               </div>
@@ -117,7 +117,7 @@ export function AboutSection() {
             <div className="grid md:grid-cols-2 gap-8">
               <Card className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
                 <CardContent className="p-6">
-                  <div className="bg-gradient-spiritual p-3 rounded-full w-fit mb-4">
+                  <div className="bg-gradient-golden p-3 rounded-full w-fit mb-4">
                     <Shield className="w-6 h-6 text-white" />
                   </div>
                   <h4 className="text-lg font-heading font-semibold mb-3 text-primary">
@@ -131,7 +131,7 @@ export function AboutSection() {
 
               <Card className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
                 <CardContent className="p-6">
-                  <div className="bg-gradient-spiritual p-3 rounded-full w-fit mb-4">
+                  <div className="bg-gradient-golden p-3 rounded-full w-fit mb-4">
                     <Sparkles className="w-6 h-6 text-white" />
                   </div>
                   <h4 className="text-lg font-heading font-semibold mb-3 text-primary">
@@ -184,7 +184,7 @@ export function AboutSection() {
                   className="shadow-peaceful hover:shadow-spiritual transition-spiritual"
                 >
                   <CardContent className="p-6 text-center">
-                    <div className="bg-gradient-spiritual p-3 rounded-full w-fit mx-auto mb-4">
+                    <div className="bg-gradient-golden p-3 rounded-full w-fit mx-auto mb-4">
                       <item.icon className="w-6 h-6 text-white" />
                     </div>
                     <h4 className="text-lg font-heading font-semibold mb-2 text-primary">

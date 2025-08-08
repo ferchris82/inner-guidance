@@ -27,7 +27,7 @@ export function Footer() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             {/* Brand */}
             <div className="lg:col-span-2">
-              <h3 className="text-3xl font-heading font-bold mb-4 text-gradient-spiritual">
+              <h3 className="text-3xl font-heading font-bold mb-4 text-primary">
                 Maité Gutiérrez
               </h3>
               <p className="text-primary-foreground/80 mb-6 text-lg leading-relaxed">
@@ -87,19 +87,19 @@ export function Footer() {
               </h4>
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
-                  <Mail className="w-4 h-4 text-accent" />
+                  <Mail className="w-4 h-4 icon-golden-gradient" />
                   <span className="text-primary-foreground/80 text-sm">
                     maite.monitora@gmail.com
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Clock className="w-4 h-4 text-accent" />
+                  <Clock className="w-4 h-4 icon-golden-gradient" />
                   <span className="text-primary-foreground/80 text-sm">
                     Lun-Vie: 9AM-6PM
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <MapPin className="w-4 h-4 text-accent" />
+                  <MapPin className="w-4 h-4 icon-golden-gradient" />
                   <span className="text-primary-foreground/80 text-sm">
                     Consultas virtuales
                   </span>

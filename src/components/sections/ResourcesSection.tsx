@@ -65,7 +65,7 @@ export function ResourcesSection() {
       <div className="container mx-auto px-4 lg:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-gradient-spiritual">
+            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-primary">
               Recursos Gratuitos
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -91,7 +91,7 @@ export function ResourcesSection() {
                 )}
                 
                 <CardHeader className="text-center pb-4">
-                  <div className="bg-gradient-spiritual p-4 rounded-full w-fit mx-auto mb-4">
+                  <div className="bg-gradient-golden p-4 rounded-full w-fit mx-auto mb-4">
                     <resource.icon className="w-8 h-8 text-white" />
                   </div>
                   <CardTitle className="text-xl font-heading text-primary mb-2">
@@ -113,7 +113,7 @@ export function ResourcesSection() {
                         : 'bg-primary hover:bg-primary/90'
                     }`}
                   >
-                    <Download className="w-4 h-4 mr-2" />
+                    <Download className="w-4 h-4 mr-2 icon-golden-gradient" />
                     {resource.action}
                   </Button>
                 </CardContent>

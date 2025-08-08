@@ -168,6 +168,18 @@ All colors MUST be HSL.
     background-clip: text;
   }
 
+  /* Gradiente basado en los colores exactos del favicon */
+  .text-gradient-favicon {
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 50%, #5B21B6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-gradient-favicon {
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 50%, #5B21B6 100%);
+  }
+
   /* Brand-specific utility classes */
   .bg-indigo-brand {
     background-color: hsl(250 82% 26%);
@@ -175,6 +187,29 @@ All colors MUST be HSL.
 
   .bg-turquoise-brand {
     background-color: hsl(175 80% 40%);
+  }
+
+  /* Fix for text clipping in titles */
+  .text-4xl, .text-5xl {
+    line-height: 1.15 !important;
+  }
+
+  /* Golden gradient for all icons */
+  .icon-golden-gradient {
+    background: linear-gradient(135deg, #C38820 0%, #E6A835 50%, #C38820 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Alternative solid golden color for icons that don't work well with gradient */
+  .icon-golden-solid {
+    color: #C38820;
+  }
+
+  /* Golden gradient background for icon containers */
+  .bg-gradient-golden {
+    background: linear-gradient(135deg, #C38820 0%, #E6A835 50%, #C38820 100%);
   }
 
   .bg-violet-brand {
