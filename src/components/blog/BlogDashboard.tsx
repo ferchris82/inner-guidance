@@ -6,6 +6,7 @@ import { CategoryManager } from './CategoryManager';
 import { SocialManager } from './SocialManager';
 import { ContactMessagesManager } from '@/components/admin/ContactMessagesManager';
 import { NewsletterManager } from '@/components/admin/NewsletterManager';
+import { ResourcesManager } from '@/components/admin/ResourcesManager';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -16,13 +17,15 @@ import {
   Globe,
   MessageSquare,
   Mail,
-  Tag
+  Tag,
+  Video,
+  Headphones
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { BlogPost } from '@/lib/supabase';
 import { getBlogPosts } from '@/utils/blogSupabase';
 
-type DashboardView = 'overview' | 'editor' | 'manager' | 'categories' | 'social' | 'contacts' | 'newsletter';
+type DashboardView = 'overview' | 'editor' | 'manager' | 'categories' | 'social' | 'contacts' | 'newsletter' | 'resources';
 
 export function BlogDashboard() {
   const [currentView, setCurrentView] = useState<DashboardView>('overview');
@@ -44,7 +47,7 @@ export function BlogDashboard() {
       setIsEditing(false);
       setEditingPost(null);
       sessionStorage.removeItem('forceReset');
-    } else if (savedView && ['overview', 'editor', 'manager', 'categories', 'social', 'contacts', 'newsletter'].includes(savedView)) {
+    } else if (savedView && ['overview', 'editor', 'manager', 'categories', 'social', 'contacts', 'newsletter', 'resources'].includes(savedView)) {
       setCurrentView(savedView as DashboardView);
     }
   }, []);
@@ -178,6 +181,12 @@ export function BlogDashboard() {
 
   const handleNewsletterManager = () => {
     changeView('newsletter');
+    setIsEditing(false);
+    setEditingPost(null);
+  };
+
+  const handleResourcesManager = () => {
+    changeView('resources');
     setIsEditing(false);
     setEditingPost(null);
   };
@@ -326,6 +335,26 @@ export function BlogDashboard() {
     );
   }
 
+  if (currentView === 'resources') {
+    return (
+      <div className="min-h-screen bg-gradient-peaceful">
+        <div className="p-4">
+          <Button
+            variant="ghost"
+            onClick={handleBackToOverview}
+            className="mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver al Dashboard
+          </Button>
+        </div>
+        <div className="max-w-6xl mx-auto p-4">
+          <ResourcesManager />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-peaceful p-6">
       <div className="max-w-7xl mx-auto">
@@ -455,6 +484,24 @@ export function BlogDashboard() {
                 <h3 className="text-lg font-medium mb-2">Subscripciones</h3>
                 <p className="text-sm text-muted-foreground">
                   Administra los suscriptores del newsletter
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Card 
+              className="shadow-peaceful hover:shadow-spiritual transition-spiritual cursor-pointer"
+              onClick={handleResourcesManager}
+            >
+              <CardContent className="p-6 text-center">
+                <Video className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">Recursos</h3>
+                <p className="text-sm text-muted-foreground">
+                  Gestiona podcasts, videos de YouTube y recursos
                 </p>
               </CardContent>
             </Card>

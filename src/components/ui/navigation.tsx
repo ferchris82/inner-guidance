@@ -108,6 +108,12 @@ export function Navigation() {
             >
               Blog
             </button>
+            <button 
+              onClick={() => scrollToSection('recursos')}
+              className="text-foreground hover:text-primary transition-spiritual"
+            >
+              Recursos
+            </button>
             <Button 
               onClick={() => scrollToSection('contacto')}
               className="bg-gradient-aqua hover:shadow-spiritual transition-spiritual"
@@ -180,6 +186,12 @@ export function Navigation() {
                 className="block px-3 py-2 text-foreground hover:text-primary transition-spiritual w-full text-left"
               >
                 Blog
+              </button>
+              <button 
+                onClick={() => scrollToSection('recursos')}
+                className="block px-3 py-2 text-foreground hover:text-primary transition-spiritual w-full text-left"
+              >
+                Recursos
               </button>
               <Button 
                 onClick={() => scrollToSection('contacto')}
