@@ -380,7 +380,7 @@ export function BlogDashboard() {
         </div>
 
         {/* Acciones Rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -389,10 +389,10 @@ export function BlogDashboard() {
               className="shadow-peaceful hover:shadow-spiritual transition-spiritual cursor-pointer"
               onClick={handleNewPost}
             >
-              <CardContent className="p-6 text-center">
-                <Plus className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Nuevo Artículo</h3>
-                <p className="text-sm text-muted-foreground">
+              <CardContent className="p-4 sm:p-6 text-center">
+                <Plus className="w-8 h-8 sm:w-12 sm:h-12 text-primary mx-auto mb-3 sm:mb-4" />
+                <h3 className="text-base sm:text-lg font-medium mb-2">Nuevo Artículo</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Crea contenido espiritual con el editor profesional
                 </p>
               </CardContent>
@@ -407,10 +407,10 @@ export function BlogDashboard() {
               className="shadow-peaceful hover:shadow-spiritual transition-spiritual cursor-pointer"
               onClick={() => setCurrentView('manager')}
             >
-              <CardContent className="p-6 text-center">
-                <Edit3 className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Gestionar Artículos</h3>
-                <p className="text-sm text-muted-foreground">
+              <CardContent className="p-4 sm:p-6 text-center">
+                <Edit3 className="w-8 h-8 sm:w-12 sm:h-12 text-primary mx-auto mb-3 sm:mb-4" />
+                <h3 className="text-base sm:text-lg font-medium mb-2">Gestionar Artículos</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Edita, organiza y administra tus publicaciones
                 </p>
               </CardContent>
@@ -425,10 +425,10 @@ export function BlogDashboard() {
               className="shadow-peaceful hover:shadow-spiritual transition-spiritual cursor-pointer"
               onClick={handleCategoriesManager}
             >
-              <CardContent className="p-6 text-center">
-                <Tag className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Categorías</h3>
-                <p className="text-sm text-muted-foreground">
+              <CardContent className="p-4 sm:p-6 text-center">
+                <Tag className="w-8 h-8 sm:w-12 sm:h-12 text-primary mx-auto mb-3 sm:mb-4" />
+                <h3 className="text-base sm:text-lg font-medium mb-2">Categorías</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Organiza tu contenido por temas espirituales
                 </p>
               </CardContent>
@@ -443,10 +443,10 @@ export function BlogDashboard() {
               className="shadow-peaceful hover:shadow-spiritual transition-spiritual cursor-pointer"
               onClick={handleSocialManager}
             >
-              <CardContent className="p-6 text-center">
-                <Globe className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Redes Sociales</h3>
-                <p className="text-sm text-muted-foreground">
+              <CardContent className="p-4 sm:p-6 text-center">
+                <Globe className="w-8 h-8 sm:w-12 sm:h-12 text-primary mx-auto mb-3 sm:mb-4" />
+                <h3 className="text-base sm:text-lg font-medium mb-2">Redes Sociales</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Configura los enlaces a tus redes sociales
                 </p>
               </CardContent>
@@ -497,10 +497,10 @@ export function BlogDashboard() {
               className="shadow-peaceful hover:shadow-spiritual transition-spiritual cursor-pointer"
               onClick={handleResourcesManager}
             >
-              <CardContent className="p-6 text-center">
-                <Video className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Recursos</h3>
-                <p className="text-sm text-muted-foreground">
+              <CardContent className="p-4 sm:p-6 text-center">
+                <Video className="w-8 h-8 sm:w-12 sm:h-12 text-primary mx-auto mb-3 sm:mb-4" />
+                <h3 className="text-base sm:text-lg font-medium mb-2">Recursos</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Gestiona podcasts, videos de YouTube y recursos
                 </p>
               </CardContent>
@@ -510,57 +510,58 @@ export function BlogDashboard() {
 
         {/* Artículos Recientes */}
         <Card className="shadow-peaceful">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5" />
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
               Artículos Recientes
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-3 sm:p-6">
             {isLoading ? (
-              <div className="text-center py-8">
-                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-muted-foreground">Cargando artículos...</p>
+              <div className="text-center py-6 sm:py-8">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3 sm:mb-4"></div>
+                <p className="text-sm text-muted-foreground">Cargando artículos...</p>
               </div>
             ) : recentArticles.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {recentArticles.map((article) => (
-                  <div key={article.id} className="flex items-center justify-between p-4 bg-gradient-peaceful rounded-lg">
-                    <div>
-                      <h4 className="font-medium line-clamp-1">{article.title}</h4>
-                      <p className="text-sm text-muted-foreground">
+                  <div key={article.id} className="flex items-center justify-between p-3 sm:p-4 bg-gradient-peaceful rounded-lg">
+                    <div className="flex-1 min-w-0 pr-3">
+                      <h4 className="font-medium line-clamp-1 text-sm sm:text-base">{article.title}</h4>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         Publicado el {formatDate(article.created_at)}
                       </p>
                     </div>
-                    <Badge variant="outline">
+                    <Badge variant="outline" className="text-xs flex-shrink-0">
                       {getCategoryName(article.category)}
                     </Badge>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8">
-                <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <p className="text-muted-foreground mb-4">
+              <div className="text-center py-6 sm:py-8">
+                <FileText className="w-8 h-8 sm:w-12 sm:h-12 text-muted-foreground mx-auto mb-3 sm:mb-4 opacity-50" />
+                <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">
                   No hay artículos recientes
                 </p>
                 <Button 
                   onClick={handleNewPost}
                   variant="outline"
                   size="sm"
+                  className="text-xs sm:text-sm"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                   Crear Primer Artículo
                 </Button>
               </div>
             )}
             
             {recentArticles.length > 0 && (
-              <div className="mt-6">
+              <div className="mt-4 sm:mt-6">
                 <Button 
                   variant="outline" 
                   onClick={() => setCurrentView('manager')}
-                  className="w-full"
+                  className="w-full text-xs sm:text-sm"
                 >
                   Ver Todos los Artículos
                 </Button>

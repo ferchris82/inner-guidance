@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Play, BookOpen, FileText, Video, Headphones, Youtube, Music } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AudioPlayButton } from "@/components/audio/AudioPlayButton";
+import { YouTubeEmbed } from "@/components/media/YouTubeEmbed";
+import { Download, Play, BookOpen, FileText, Video, Headphones, Youtube, Music, X } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { subscribeToNewsletter } from '@/services/newsletterSupabase';
 import { getActiveResources } from '@/utils/resourcesSupabase';
@@ -13,7 +16,55 @@ export function ResourcesSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resources, setResources] = useState<ResourceItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [modalResources, setModalResources] = useState<ResourceItem[]>([]);
   const { toast } = useToast();
+
+  // Definir categorías de recursos
+  const resourceCategories = [
+    {
+      type: 'podcast',
+      title: 'Podcasts',
+      description: 'Reflexiones espirituales y enseñanzas en formato de audio',
+      icon: Headphones,
+      color: 'from-purple-500 to-pink-500'
+    },
+    {
+      type: 'youtube',
+      title: 'Videos YouTube',
+      description: 'Contenido audiovisual inspirador y educativo',
+      icon: Youtube,
+      color: 'from-red-500 to-red-600'
+    },
+    {
+      type: 'audio',
+      title: 'Audios',
+      description: 'Meditaciones, oraciones y contenido espiritual',
+      icon: Music,
+      color: 'from-blue-500 to-cyan-500'
+    },
+    {
+      type: 'pdf',
+      title: 'Documentos PDF',
+      description: 'Libros, estudios y material de lectura',
+      icon: FileText,
+      color: 'from-green-500 to-emerald-500'
+    },
+    {
+      type: 'study',
+      title: 'Estudios Bíblicos',
+      description: 'Profundización en las Escrituras',
+      icon: BookOpen,
+      color: 'from-amber-500 to-orange-500'
+    },
+    {
+      type: 'video_series',
+      title: 'Series de Video',
+      description: 'Contenido estructurado en múltiples partes',
+      icon: Video,
+      color: 'from-indigo-500 to-purple-500'
+    }
+  ];
 
   // Cargar recursos dinámicos desde Supabase
   useEffect(() => {
@@ -33,6 +84,24 @@ export function ResourcesSection() {
 
     loadResources();
   }, []);
+
+  // Abrir modal con recursos filtrados por categoría
+  const openCategoryModal = (categoryType: string) => {
+    const filteredResources = resources.filter(resource => resource.type === categoryType);
+    setModalResources(filteredResources);
+    setSelectedCategory(categoryType);
+  };
+
+  // Cerrar modal
+  const closeModal = () => {
+    setSelectedCategory(null);
+    setModalResources([]);
+  };
+
+  // Obtener información de la categoría seleccionada
+  const getSelectedCategoryInfo = () => {
+    return resourceCategories.find(cat => cat.type === selectedCategory);
+  };
 
   // Manejar suscripción al newsletter
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
@@ -73,36 +142,6 @@ export function ResourcesSection() {
     }
   };
 
-  // Obtener ícono según el tipo de recurso
-  const getResourceIcon = (type: string) => {
-    const iconMap = {
-      FileText, Video, Headphones, BookOpen, Youtube, Music
-    };
-    
-    const config = resourceTypeConfig[type as keyof typeof resourceTypeConfig];
-    if (!config) return FileText;
-    
-    return iconMap[config.icon as keyof typeof iconMap] || FileText;
-  };
-
-  // Obtener acción según el tipo de recurso
-  const getResourceAction = (type: string, url: string) => {
-    switch (type) {
-      case 'podcast':
-        return url.includes('spotify') ? 'Escuchar en Spotify' : 'Escuchar';
-      case 'youtube':
-      case 'video_series':
-        return 'Ver video';
-      case 'pdf':
-      case 'study':
-        return 'Descargar';
-      case 'audio':
-        return 'Escuchar';
-      default:
-        return 'Acceder';
-    }
-  };
-
   return (
     <section id="recursos" className="py-20 bg-background">
       <div className="container mx-auto px-4 lg:px-6">
@@ -117,109 +156,55 @@ export function ResourcesSection() {
             </p>
           </div>
 
-          {/* Resources Grid */}
-          <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4 mb-20">
-            {isLoading ? (
-              // Loading skeleton
-              Array.from({ length: 4 }).map((_, index) => (
-                <Card key={index} className="shadow-peaceful animate-pulse">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-center w-12 h-12 bg-gray-200 rounded-full mx-auto mb-3"></div>
-                    <div className="h-3 bg-gray-200 rounded mb-2"></div>
-                    <div className="h-2 bg-gray-200 rounded mb-3"></div>
-                    <div className="h-6 bg-gray-200 rounded"></div>
-                  </CardContent>
-                </Card>
-              ))
-            ) : resources.length === 0 ? (
-              // No resources message
-              <div className="col-span-full text-center py-12">
-                <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No hay recursos disponibles</h3>
-                <p className="text-muted-foreground">
-                  Los recursos se están preparando. Vuelve pronto para descubrir contenido espiritual inspirador.
-                </p>
-              </div>
-            ) : (
-              resources.map((resource, index) => {
-                const IconComponent = getResourceIcon(resource.type);
-                const action = getResourceAction(resource.type, resource.url);
-                const config = resourceTypeConfig[resource.type];
-                
-                return (
-                  <Card 
-                    key={resource.id} 
-                    className={`shadow-peaceful hover:shadow-spiritual transition-spiritual animate-slide-up relative ${
-                      resource.featured ? 'border-primary shadow-spiritual' : ''
-                    }`}
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    {resource.featured && (
-                      <Badge className="absolute -top-2 left-3 bg-gradient-spiritual text-xs px-2 py-1">
-                        Destacado
+          {/* Resource Categories Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+            {resourceCategories.map((category, index) => {
+              const IconComponent = category.icon;
+              const categoryCount = resources.filter(r => r.type === category.type).length;
+              
+              return (
+                <Card 
+                  key={category.type}
+                  className="shadow-peaceful hover:shadow-spiritual transition-spiritual animate-slide-up cursor-pointer group"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                  onClick={() => openCategoryModal(category.type)}
+                >
+                  <CardHeader className="text-center pb-3">
+                    <div className={`bg-gradient-to-r ${category.color} p-4 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform`}>
+                      <IconComponent className="w-8 h-8 text-white" />
+                    </div>
+                    <CardTitle className="text-lg font-heading text-primary mb-2">
+                      {category.title}
+                    </CardTitle>
+                    {categoryCount > 0 && (
+                      <Badge className="w-fit mx-auto bg-gradient-spiritual">
+                        {categoryCount} recurso{categoryCount !== 1 ? 's' : ''}
                       </Badge>
                     )}
-                    
-                    <CardHeader className="text-center pb-3 pt-4">
-                      {/* Thumbnail or Icon */}
-                      <div className="mx-auto mb-3">
-                        {resource.thumbnail_url ? (
-                          <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 shadow-sm mx-auto relative">
-                            <img 
-                              src={resource.thumbnail_url} 
-                              alt={resource.title}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                // Fallback to icon if image fails to load
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                                const fallback = target.parentElement?.querySelector('.fallback-icon') as HTMLElement;
-                                if (fallback) fallback.style.display = 'flex';
-                              }}
-                            />
-                            {/* Hidden fallback icon, shown if image fails */}
-                            <div 
-                              className="fallback-icon absolute inset-0 bg-gradient-aqua rounded-lg flex items-center justify-center"
-                              style={{ display: 'none' }}
-                            >
-                              <IconComponent className="w-5 h-5 text-white" />
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="bg-gradient-aqua p-2 rounded-full w-fit mx-auto">
-                            <IconComponent className="w-5 h-5 text-white" />
-                          </div>
-                        )}
-                      </div>
-                      <CardTitle className="text-sm font-heading text-primary mb-1 line-clamp-2 leading-tight">
-                        {resource.title}
-                      </CardTitle>
-                      <Badge variant="outline" className="w-fit mx-auto text-xs px-2 py-1">
-                        {config?.label || resource.type}
-                      </Badge>
-                    </CardHeader>
+                  </CardHeader>
 
-                    <CardContent className="text-center pt-0 pb-4">
-                      <p className="text-muted-foreground mb-4 text-xs line-clamp-2 leading-relaxed">
-                        {resource.description}
-                      </p>
-                      <Button 
-                        size="sm"
-                        className={`w-full transition-spiritual text-xs ${
-                          resource.featured 
-                            ? 'bg-gradient-spiritual hover:shadow-spiritual' 
-                            : 'bg-primary hover:bg-primary/90'
-                        }`}
-                        onClick={() => window.open(resource.url, '_blank', 'noopener,noreferrer')}
-                      >
-                        <Download className="w-3 h-3 mr-1 icon-aqua-gradient" />
-                        {action}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                );
-              })
-            )}
+                  <CardContent className="text-center pt-0 pb-6">
+                    <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
+                      {category.description}
+                    </p>
+                    
+                    <Button 
+                      className={`w-full bg-gradient-to-r ${category.color} hover:opacity-90 transition-all text-white shadow-lg`}
+                      disabled={categoryCount === 0}
+                    >
+                      {categoryCount > 0 ? (
+                        <>
+                          <Play className="w-4 h-4 mr-2" />
+                          Ver recursos
+                        </>
+                      ) : (
+                        'Próximamente'
+                      )}
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           {/* Newsletter Signup */}
@@ -257,6 +242,154 @@ export function ResourcesSection() {
           </div>
         </div>
       </div>
+
+      {/* Modal para mostrar recursos de la categoría seleccionada */}
+      <Dialog open={!!selectedCategory} onOpenChange={closeModal}>
+        <DialogContent className="max-w-5xl max-h-[85vh] overflow-hidden p-0 z-[9000]">
+          {/* Header del Modal */}
+          <div className="sticky top-0 bg-white border-b border-gray-200 p-4 z-10">
+            <DialogHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  {getSelectedCategoryInfo() && (() => {
+                    const categoryInfo = getSelectedCategoryInfo()!;
+                    const IconComponent = categoryInfo.icon;
+                    return (
+                      <>
+                        <div className={`bg-gradient-to-r ${categoryInfo.color} p-2 rounded-lg`}>
+                          <IconComponent className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <DialogTitle className="text-xl font-heading text-primary">
+                            {categoryInfo.title}
+                          </DialogTitle>
+                          <p className="text-sm text-muted-foreground">
+                            {modalResources.length} recurso{modalResources.length !== 1 ? 's' : ''} disponible{modalResources.length !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
+            </DialogHeader>
+          </div>
+
+          {/* Botón flotante de cerrar */}
+          <button
+            onClick={closeModal}
+            className="absolute top-4 right-4 z-[9010] bg-white hover:bg-gray-100 rounded-full p-2 shadow-lg border border-gray-200 transition-all duration-200 hover:scale-110"
+          >
+            <X className="w-5 h-5 text-gray-600" />
+          </button>
+
+          {/* Contenido del Modal con scroll */}
+          <div className="overflow-y-auto max-h-[70vh] p-4">
+            {modalResources.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  {getSelectedCategoryInfo() && (() => {
+                    const IconComponent = getSelectedCategoryInfo()!.icon;
+                    return <IconComponent className="w-8 h-8 text-gray-400" />;
+                  })()}
+                </div>
+                <h3 className="text-lg font-semibold mb-2">No hay recursos disponibles</h3>
+                <p className="text-muted-foreground">
+                  Los recursos de esta categoría se están preparando. ¡Vuelve pronto!
+                </p>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {modalResources.map((resource) => {
+                  const isYouTubeVideo = (resource.type === 'youtube' || resource.type === 'video_series') && 
+                                       (resource.url.includes('youtube.com') || resource.url.includes('youtu.be'));
+                  const isAudioContent = (resource.type === 'audio' || resource.type === 'podcast') && 
+                                       (resource.url.includes('supabase') || resource.url.endsWith('.mp3') || 
+                                        resource.url.endsWith('.wav') || resource.url.endsWith('.m4a'));
+
+                  return (
+                    <Card 
+                      key={resource.id} 
+                      className={`p-3 hover:shadow-md transition-shadow`}
+                    >
+                      <div className="flex gap-2.5">
+                        {/* Thumbnail/Icon un poco más grande */}
+                        <div className="flex-shrink-0">
+                          {resource.thumbnail_url ? (
+                            <img 
+                              src={resource.thumbnail_url} 
+                              alt={resource.title}
+                              className="w-12 h-9 rounded object-cover"
+                            />
+                          ) : (
+                            <div className={`w-12 h-9 bg-gradient-to-r ${getSelectedCategoryInfo()?.color} rounded flex items-center justify-center`}>
+                              {getSelectedCategoryInfo() && (() => {
+                                const IconComponent = getSelectedCategoryInfo()!.icon;
+                                return <IconComponent className="w-4 h-4 text-white" />;
+                              })()}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Content un poco más espacioso */}
+                        <div className="flex-grow min-w-0">
+                          <div className="flex items-start justify-between mb-1.5">
+                            <div className="flex-grow">
+                              <h3 className="text-sm font-semibold text-primary line-clamp-2 leading-tight">
+                                {resource.title}
+                              </h3>
+                              {resource.featured && (
+                                <Badge className="bg-gradient-spiritual text-xs mt-1">
+                                  Destacado
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <p className="text-muted-foreground mb-2.5 text-xs line-clamp-2 leading-relaxed">
+                            {resource.description}
+                          </p>
+
+                          {/* Reproductor específico según el tipo - compacto pero legible */}
+                          {isAudioContent ? (
+                            <div className="scale-85 origin-left -ml-2">
+                              <AudioPlayButton
+                                audioUrl={resource.url}
+                                title={resource.title}
+                                description={resource.description}
+                                thumbnail={resource.thumbnail_url}
+                                resourceId={resource.id}
+                              />
+                            </div>
+                          ) : isYouTubeVideo ? (
+                            <div className="w-full">
+                              <YouTubeEmbed 
+                                videoUrl={resource.url}
+                                title={resource.title}
+                                description={resource.description}
+                                className="compact-video"
+                              />
+                            </div>
+                          ) : (
+                            <Button 
+                              size="sm"
+                              onClick={() => window.open(resource.url, '_blank', 'noopener,noreferrer')}
+                              className="h-6 text-xs px-2.5"
+                            >
+                              <Download className="w-3 h-3 mr-1" />
+                              {resource.type === 'pdf' ? 'Descargar' : 'Ver'}
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

@@ -63,6 +63,11 @@ import {
   toggleResourceFeatured,
   reorderResources
 } from '@/utils/resourcesSupabase';
+import { 
+  uploadAudioFile, 
+  deleteAudioFile, 
+  initializeAudioStorage 
+} from '@/lib/audioSupabase';
 import { initializeSampleResources, checkExistingResources } from '@/utils/initializeResources';
 
 const getIconComponent = (iconName: string) => {
@@ -80,6 +85,8 @@ export function ResourcesManager() {
   const [deletingResource, setDeletingResource] = useState<ResourceItem | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const { toast } = useToast();
 
   // Estado del formulario
@@ -176,6 +183,77 @@ export function ResourcesManager() {
           thumbnail_url: thumbnail
         }));
       }
+    }
+  };
+
+  // Manejar subida de archivos de audio
+  const handleFileUpload = async (file: File) => {
+    if (!file) return;
+
+    // Validar tipo de archivo
+    const allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/m4a', 'audio/ogg'];
+    if (!allowedTypes.includes(file.type)) {
+      toast({
+        title: "Tipo de archivo no válido",
+        description: "Solo se permiten archivos de audio (MP3, WAV, M4A, OGG)",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validar tamaño (50MB máximo)
+    if (file.size > 50 * 1024 * 1024) {
+      toast({
+        title: "Archivo muy grande",
+        description: "El archivo no puede ser mayor a 50MB",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setUploadingFile(true);
+    setUploadProgress(0);
+
+    try {
+      // Inicializar storage si es necesario
+      await initializeAudioStorage();
+      
+      // Simular progreso (ya que Supabase no provee progreso real)
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => Math.min(prev + 10, 90));
+      }, 200);
+
+      // Subir archivo
+      const fileUrl = await uploadAudioFile(file, file.name);
+      
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      if (fileUrl) {
+        // Actualizar formulario con la URL del archivo subido
+        setFormData(prev => ({
+          ...prev,
+          url: fileUrl,
+          title: prev.title || file.name.replace(/\.[^/.]+$/, ""), // Usar nombre del archivo si no hay título
+        }));
+
+        toast({
+          title: "✅ Archivo subido exitosamente",
+          description: "El audio se subió correctamente y está listo para usar",
+        });
+      } else {
+        throw new Error('No se pudo obtener la URL del archivo');
+      }
+    } catch (error) {
+      console.error('Error subiendo archivo:', error);
+      toast({
+        title: "Error subiendo archivo",
+        description: error instanceof Error ? error.message : "No se pudo subir el archivo",
+        variant: "destructive"
+      });
+    } finally {
+      setUploadingFile(false);
+      setUploadProgress(0);
     }
   };
 
@@ -392,51 +470,51 @@ export function ResourcesManager() {
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-3 sm:p-6 max-w-5xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center space-x-3">
-          <Layers className="h-7 w-7 text-blue-600" />
-          <h1 className="text-3xl font-bold text-gray-900">Gestión de Recursos</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 gap-4">
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <Layers className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600" />
+          <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Gestión de Recursos</h1>
         </div>
-        <Button onClick={() => openDialog()} className="bg-blue-600 hover:bg-blue-700">
+        <Button onClick={() => openDialog()} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
           <Plus className="h-4 w-4 mr-2" />
           Agregar Recurso
         </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <Card className="p-4">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Layers className="h-5 w-5 text-blue-600" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <Card className="p-3 sm:p-4">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
+              <Layers className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Total</p>
-              <p className="text-2xl font-bold">{resources.length}</p>
+              <p className="text-xs sm:text-sm text-gray-600">Total</p>
+              <p className="text-lg sm:text-2xl font-bold">{resources.length}</p>
             </div>
           </div>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Eye className="h-5 w-5 text-green-600" />
+        <Card className="p-3 sm:p-4">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="p-1.5 sm:p-2 bg-green-100 rounded-lg">
+              <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Activos</p>
-              <p className="text-2xl font-bold">{resources.filter(r => r.active).length}</p>
+              <p className="text-xs sm:text-sm text-gray-600">Activos</p>
+              <p className="text-lg sm:text-2xl font-bold">{resources.filter(r => r.active).length}</p>
             </div>
           </div>
         </Card>
-        <Card className="p-4">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <Star className="h-5 w-5 text-yellow-600" />
+        <Card className="p-3 sm:p-4">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="p-1.5 sm:p-2 bg-yellow-100 rounded-lg">
+              <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Destacados</p>
-              <p className="text-2xl font-bold">{resources.filter(r => r.featured).length}</p>
+              <p className="text-xs sm:text-sm text-gray-600">Destacados</p>
+              <p className="text-lg sm:text-2xl font-bold">{resources.filter(r => r.featured).length}</p>
             </div>
           </div>
         </Card>
@@ -455,17 +533,17 @@ export function ResourcesManager() {
 
       {/* Resources List */}
       {resources.length === 0 ? (
-        <Card className="p-8 text-center">
+        <Card className="p-6 sm:p-8 text-center">
           <div className="space-y-4">
-            <div className="p-4 bg-gray-100 rounded-full w-16 h-16 mx-auto flex items-center justify-center">
-              <Layers className="h-8 w-8 text-gray-400" />
+            <div className="p-3 sm:p-4 bg-gray-100 rounded-full w-12 h-12 sm:w-16 sm:h-16 mx-auto flex items-center justify-center">
+              <Layers className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400" />
             </div>
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No hay recursos</h3>
-              <p className="text-gray-600 mb-4">
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No hay recursos</h3>
+              <p className="text-sm sm:text-base text-gray-600 mb-4">
                 Comienza agregando tu primer recurso espiritual
               </p>
-              <Button onClick={() => openDialog()} className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={() => openDialog()} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-2" />
                 Agregar Primer Recurso
               </Button>
@@ -473,7 +551,7 @@ export function ResourcesManager() {
           </div>
         </Card>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {resources.map((resource, index) => {
             const typeConfig = resourceTypeConfig[resource.type];
             const IconComponent = resourceTypeConfig[resource.type].icon === 'Headphones' ? Headphones :
@@ -485,11 +563,11 @@ export function ResourcesManager() {
                                  Video;
             
             return (
-              <Card key={resource.id} className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start space-x-4 flex-1">
+              <Card key={resource.id} className="p-3 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+                  <div className="flex items-start space-x-3 sm:space-x-4 flex-1 min-w-0">
                     {/* Thumbnail */}
-                    <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                    <div className="w-12 h-12 sm:w-20 sm:h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                       {resource.thumbnail_url ? (
                         <img 
                           src={resource.thumbnail_url} 
@@ -498,45 +576,45 @@ export function ResourcesManager() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          {IconComponent && <IconComponent className="h-8 w-8 text-gray-400" />}
+                          {IconComponent && <IconComponent className="h-4 w-4 sm:h-8 sm:w-8 text-gray-400" />}
                         </div>
                       )}
                     </div>
                     
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center space-x-2">
-                          <h3 className="text-lg font-semibold text-gray-900 truncate">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
+                        <div className="flex items-center space-x-2 min-w-0 flex-1">
+                          <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
                             {resource.title}
                           </h3>
                           {resource.featured && (
-                            <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                            <Star className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-500 fill-current flex-shrink-0" />
                           )}
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Badge variant="default">
-                            {IconComponent && <IconComponent className="h-3 w-3 mr-1" />}
+                        <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+                          <Badge variant="default" className="text-xs">
+                            {IconComponent && <IconComponent className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />}
                             {typeConfig.label}
                           </Badge>
-                          <Badge variant={resource.active ? "default" : "secondary"}>
+                          <Badge variant={resource.active ? "default" : "secondary"} className="text-xs">
                             {resource.active ? "Activo" : "Inactivo"}
                           </Badge>
                         </div>
                       </div>
                       
-                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                      <p className="text-gray-600 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2">
                         {resource.description}
                       </p>
                       
-                      <div className="flex items-center text-xs text-gray-500 space-x-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center text-xs text-gray-500 space-y-1 sm:space-y-0 sm:space-x-4">
                         <span>Orden: {resource.order_index}</span>
-                        <span>•</span>
+                        <span className="hidden sm:inline">•</span>
                         <a 
                           href={resource.url} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="hover:text-blue-600 truncate max-w-xs"
+                          className="hover:text-blue-600 truncate max-w-32 sm:max-w-xs"
                         >
                           {resource.url}
                         </a>
@@ -544,10 +622,10 @@ export function ResourcesManager() {
                     </div>
                   </div>
                   
-                  {/* Actions */}
-                  <div className="flex items-center space-x-2 ml-4">
-                    {/* Reorder buttons */}
-                    <div className="flex flex-col">
+                  {/* Actions - Stacked on mobile, horizontal on desktop */}
+                  <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-2 sm:ml-4 mt-3 sm:mt-0">
+                    {/* Reorder buttons - hidden on mobile to save space */}
+                    <div className="hidden sm:flex sm:flex-col">
                       <Button
                         variant="outline"
                         size="sm"
@@ -568,43 +646,52 @@ export function ResourcesManager() {
                       </Button>
                     </div>
                     
-                    {/* Toggle buttons */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleToggleFeatured(resource)}
-                      className={resource.featured ? 'text-yellow-600' : ''}
-                    >
-                      <Star className={`h-4 w-4 ${resource.featured ? 'fill-current' : ''}`} />
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleToggleActive(resource)}
-                      className={resource.active ? 'text-green-600' : 'text-gray-600'}
-                    >
-                      {resource.active ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                    </Button>
-                    
-                    {/* Edit button */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openDialog(resource)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    
-                    {/* Delete button */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setDeletingResource(resource)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {/* Main action buttons */}
+                    <div className="flex items-center space-x-1 sm:space-x-2">
+                      {/* Toggle featured */}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleToggleFeatured(resource)}
+                        className={`h-7 w-7 sm:h-8 sm:w-8 p-0 ${resource.featured ? 'text-yellow-600' : ''}`}
+                        title={resource.featured ? 'Quitar destacado' : 'Marcar como destacado'}
+                      >
+                        <Star className={`h-3 w-3 sm:h-4 sm:w-4 ${resource.featured ? 'fill-current' : ''}`} />
+                      </Button>
+                      
+                      {/* Toggle active */}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleToggleActive(resource)}
+                        className={`h-7 w-7 sm:h-8 sm:w-8 p-0 ${resource.active ? 'text-green-600' : 'text-gray-600'}`}
+                        title={resource.active ? 'Desactivar' : 'Activar'}
+                      >
+                        {resource.active ? <Eye className="h-3 w-3 sm:h-4 sm:w-4" /> : <EyeOff className="h-3 w-3 sm:h-4 sm:w-4" />}
+                      </Button>
+                      
+                      {/* Edit button */}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openDialog(resource)}
+                        className="h-7 w-7 sm:h-8 sm:w-8 p-0"
+                        title="Editar"
+                      >
+                        <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </Button>
+                      
+                      {/* Delete button */}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setDeletingResource(resource)}
+                        className="h-7 w-7 sm:h-8 sm:w-8 p-0 text-red-600 hover:text-red-700"
+                        title="Eliminar"
+                      >
+                        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -615,12 +702,12 @@ export function ResourcesManager() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto mx-4 w-full sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-lg sm:text-xl">
               {editingResource ? 'Editar Recurso' : 'Agregar Recurso'}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-sm">
               {editingResource 
                 ? 'Modifica la información del recurso.' 
                 : 'Agrega un nuevo recurso espiritual.'
@@ -628,7 +715,7 @@ export function ResourcesManager() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Tipo de recurso */}
             <div>
               <Label htmlFor="type">Tipo de Recurso</Label>
@@ -712,6 +799,51 @@ export function ResourcesManager() {
                 </details>
               </div>
             </div>
+
+            {/* Subida de archivo de audio */}
+            {(formData.type === 'audio' || formData.type === 'podcast') && (
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <Label className="text-sm font-medium text-blue-900">
+                  📁 Subir tu propio archivo de audio
+                </Label>
+                <p className="text-xs text-blue-700 mt-1 mb-3">
+                  Sube tu archivo MP3, WAV, M4A u OGG (máximo 50MB) en lugar de usar una URL externa
+                </p>
+                
+                {uploadingFile ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <div className="flex-1 bg-blue-200 rounded-full h-2">
+                        <div 
+                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${uploadProgress}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-blue-700">{uploadProgress}%</span>
+                    </div>
+                    <p className="text-xs text-blue-600">Subiendo archivo...</p>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="file"
+                      accept="audio/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleFileUpload(file);
+                      }}
+                      className="flex-1 text-xs file:mr-2 file:py-1 file:px-2 file:border-0 file:text-xs file:font-medium file:bg-blue-600 file:text-white file:rounded file:cursor-pointer hover:file:bg-blue-700"
+                    />
+                  </div>
+                )}
+                
+                {formData.url.includes('supabase') && (
+                  <div className="mt-2 p-2 bg-green-100 rounded text-xs text-green-700">
+                    ✅ Archivo subido correctamente. Tu audio se reproducirá directamente en la página.
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Thumbnail URL */}
             <div>

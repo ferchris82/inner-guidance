@@ -202,50 +202,57 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-3 sm:p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-heading font-bold text-primary mb-2">
+        <div className="mb-4 sm:mb-8">
+          <h1 className="text-2xl sm:text-4xl font-heading font-bold text-primary mb-1 sm:mb-2">
             Editor Espiritual
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Crea contenido espiritual con total libertad de diseño
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Panel Principal */}
           <div className="lg:col-span-2">
             <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="w-5 h-5" />
+              <CardHeader className="pb-3 sm:pb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                    <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
                     {isPreviewMode ? 'Vista Previa' : 'Editor de Contenido'}
                   </CardTitle>
-                  <div className="flex items-center gap-2">
-                    <ToolbarConfigPanel
-                      config={toolbarConfig}
-                      onConfigChange={handleConfigChange}
-                      isOpen={isConfigPanelOpen}
-                      onToggle={() => setIsConfigPanelOpen(!isConfigPanelOpen)}
-                    />
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-2">
+                    <div className="order-2 sm:order-1">
+                      <ToolbarConfigPanel
+                        config={toolbarConfig}
+                        onConfigChange={handleConfigChange}
+                        isOpen={isConfigPanelOpen}
+                        onToggle={() => setIsConfigPanelOpen(!isConfigPanelOpen)}
+                      />
+                    </div>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setIsPreviewMode(!isPreviewMode)}
+                      className="flex-1 sm:flex-none order-1 sm:order-2 text-xs sm:text-sm min-w-0"
                     >
-                      {isPreviewMode ? <Settings className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      {isPreviewMode ? 'Editar' : 'Vista Previa'}
+                      {isPreviewMode ? <Settings className="w-3 h-3 sm:w-4 sm:h-4" /> : <Eye className="w-3 h-3 sm:w-4 sm:h-4" />}
+                      <span className="ml-1 sm:ml-2 truncate">
+                        {isPreviewMode ? 'Editar' : 'Vista Previa'}
+                      </span>
                     </Button>
                     <Button
                       onClick={handleSave}
                       disabled={isSaving}
-                      className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                      className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 flex-1 sm:flex-none order-3 text-xs sm:text-sm min-w-0"
                     >
-                      <Save className="w-4 h-4 mr-2" />
-                      {isSaving ? 'Guardando...' : 'Guardar'}
+                      <Save className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                      <span className="truncate">
+                        {isSaving ? 'Guardando...' : 'Guardar'}
+                      </span>
                     </Button>
                   </div>
                 </div>
@@ -263,22 +270,23 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                   </motion.div>
                 )}
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-3 sm:p-6">
                 {!isPreviewMode ? (
-                  <div className="space-y-6">
+                  <div className="space-y-4 sm:space-y-6">
                     {/* Campos básicos */}
-                    <div className="space-y-4">
+                    <div className="space-y-3 sm:space-y-4">
                       <Input
                         placeholder="Título del artículo..."
                         value={blogPost.title}
                         onChange={(e) => setBlogPost(prev => ({ ...prev, title: e.target.value }))}
-                        className="text-2xl font-heading"
+                        className="text-lg sm:text-2xl font-heading h-12"
                       />
                       <Textarea
                         placeholder="Resumen del artículo..."
                         value={blogPost.excerpt}
                         onChange={(e) => setBlogPost(prev => ({ ...prev, excerpt: e.target.value }))}
                         rows={3}
+                        className="text-sm sm:text-base"
                       />
                     </div>
 
@@ -290,15 +298,16 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                         onChange={handleEditorChange}
                         modules={quillModules}
                         placeholder="Comparte tu mensaje espiritual..."
-                        style={{ minHeight: '300px' }}
+                        style={{ minHeight: '250px' }}
+                        className="text-sm sm:text-base"
                       />
                     </div>
                   </div>
                 ) : (
                   /* Vista Previa */
-                  <div className="prose prose-lg max-w-none">
-                    <h1>{blogPost.title}</h1>
-                    <p className="text-xl text-muted-foreground">{blogPost.excerpt}</p>
+                  <div className="prose prose-sm sm:prose-lg max-w-none">
+                    <h1 className="text-xl sm:text-3xl">{blogPost.title}</h1>
+                    <p className="text-lg sm:text-xl text-muted-foreground">{blogPost.excerpt}</p>
                     <div dangerouslySetInnerHTML={{ __html: blogPost.content }} />
                   </div>
                 )}
@@ -307,23 +316,23 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
           </div>
 
           {/* Panel Lateral */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Configuración */}
             <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Settings className="w-5 h-5" />
+              <CardHeader className="pb-3 sm:pb-4">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
                   Configuración
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3 sm:space-y-4">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Categoría</label>
+                  <label className="text-xs sm:text-sm font-medium mb-2 block">Categoría</label>
                   <Select 
                     value={blogPost.category} 
                     onValueChange={(value) => setBlogPost(prev => ({ ...prev, category: value }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-9">
                       <SelectValue placeholder="Seleccionar categoría" />
                     </SelectTrigger>
                     <SelectContent>
@@ -343,12 +352,12 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Tiempo de lectura</label>
+                  <label className="text-xs sm:text-sm font-medium mb-2 block">Tiempo de lectura</label>
                   <Select
                     value={blogPost.read_time}
                     onValueChange={(value) => setBlogPost(prev => ({ ...prev, read_time: value }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-9">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -362,11 +371,12 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Imagen destacada</label>
+                  <label className="text-xs sm:text-sm font-medium mb-2 block">Imagen destacada</label>
                   <Input
                     value={blogPost.featured_image}
                     onChange={(e) => setBlogPost(prev => ({ ...prev, featured_image: e.target.value }))}
                     placeholder="URL de la imagen"
+                    className="h-9 text-sm"
                   />
                 </div>
 
@@ -378,7 +388,7 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                     onChange={(e) => setBlogPost(prev => ({ ...prev, featured: e.target.checked }))}
                     className="rounded"
                   />
-                  <label htmlFor="featured" className="text-sm font-medium">
+                  <label htmlFor="featured" className="text-xs sm:text-sm font-medium">
                     Artículo destacado
                   </label>
                 </div>
@@ -388,9 +398,9 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
             {/* Vista previa de imagen */}
             {blogPost.featured_image && (
               <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Image className="w-5 h-5" />
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Image className="w-4 h-4 sm:w-5 sm:h-5" />
                     Vista Previa
                   </CardTitle>
                 </CardHeader>
@@ -398,7 +408,7 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                   <img 
                     src={blogPost.featured_image} 
                     alt="Vista previa" 
-                    className="w-full h-32 object-cover rounded-lg"
+                    className="w-full h-24 sm:h-32 object-cover rounded-lg"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.src = '/placeholder.svg';

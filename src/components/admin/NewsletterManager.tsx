@@ -177,29 +177,29 @@ export function NewsletterManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-0">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-heading font-bold text-primary mb-2">
+        <h1 className="text-2xl sm:text-3xl font-heading font-bold text-primary mb-2">
           Gestión de Newsletter
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm sm:text-base text-muted-foreground">
           Administra los suscriptores de tu newsletter espiritual
         </p>
       </div>
 
       {/* Estadísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
         <motion.div whileHover={{ scale: 1.02 }}>
           <Card className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="bg-gradient-golden p-3 rounded-full">
-                  <Users className="w-6 h-6 text-white" />
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className="bg-gradient-golden p-2 sm:p-3 rounded-full">
+                  <Users className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Suscriptores</p>
-                  <p className="text-2xl font-bold text-primary">{stats.total}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Total Suscriptores</p>
+                  <p className="text-xl sm:text-2xl font-bold text-primary">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
@@ -208,30 +208,30 @@ export function NewsletterManager() {
 
         <motion.div whileHover={{ scale: 1.02 }}>
           <Card className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-r from-green-500 to-green-600 p-3 rounded-full">
-                  <UserCheck className="w-6 h-6 text-white" />
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className="bg-gradient-to-r from-green-500 to-green-600 p-2 sm:p-3 rounded-full">
+                  <UserCheck className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Activos</p>
-                  <p className="text-2xl font-bold text-green-600">{stats.active}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Activos</p>
+                  <p className="text-xl sm:text-2xl font-bold text-green-600">{stats.active}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.02 }}>
+        <motion.div whileHover={{ scale: 1.02 }} className="sm:col-span-2 md:col-span-1">
           <Card className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-r from-red-500 to-red-600 p-3 rounded-full">
-                  <UserMinus className="w-6 h-6 text-white" />
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className="bg-gradient-to-r from-red-500 to-red-600 p-2 sm:p-3 rounded-full">
+                  <UserMinus className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Desuscritos</p>
-                  <p className="text-2xl font-bold text-red-600">{stats.unsubscribed}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Desuscritos</p>
+                  <p className="text-xl sm:text-2xl font-bold text-red-600">{stats.unsubscribed}</p>
                 </div>
               </div>
             </CardContent>
@@ -241,22 +241,22 @@ export function NewsletterManager() {
 
       {/* Controles */}
       <Card className="shadow-peaceful">
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-            <div className="flex flex-col sm:flex-row gap-4">
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex flex-col gap-4 items-start justify-between">
+            <div className="flex flex-col w-full gap-3 sm:gap-4">
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                 <Input
                   placeholder="Buscar por email..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-80"
+                  className="pl-10 w-full sm:w-80"
                 />
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'unsubscribed')}
-                className="px-4 py-2 border border-border rounded-md bg-background"
+                className="px-3 sm:px-4 py-2 border border-border rounded-md bg-background text-sm w-full sm:w-auto"
               >
                 <option value="all">Todos los estados</option>
                 <option value="active">Solo activos</option>
@@ -264,7 +264,7 @@ export function NewsletterManager() {
               </select>
             </div>
             
-            <Button onClick={handleExport} variant="outline" className="flex items-center gap-2">
+            <Button onClick={handleExport} variant="outline" className="flex items-center gap-2 w-full sm:w-auto text-sm">
               <Download className="w-4 h-4" />
               Exportar CSV
             </Button>
@@ -274,33 +274,33 @@ export function NewsletterManager() {
 
       {/* Lista de suscriptores */}
       <Card className="shadow-peaceful">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Mail className="w-5 h-5" />
+        <CardHeader className="pb-3 sm:pb-6">
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
             Suscriptores ({filteredSubscribers.length})
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 sm:p-6">
           {filteredSubscribers.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {filteredSubscribers.map((subscriber) => (
                 <motion.div
                   key={subscriber.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center justify-between p-4 bg-gradient-peaceful rounded-lg"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 bg-gradient-peaceful rounded-lg gap-3 sm:gap-4"
                 >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <p className="font-medium">{subscriber.email}</p>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                      <p className="font-medium text-sm sm:text-base truncate">{subscriber.email}</p>
                       <Badge 
                         variant={subscriber.status === 'active' ? 'default' : 'destructive'}
-                        className={subscriber.status === 'active' ? 'bg-green-100 text-green-800' : ''}
+                        className={`text-xs w-fit ${subscriber.status === 'active' ? 'bg-green-100 text-green-800' : ''}`}
                       >
                         {subscriber.status === 'active' ? 'Activo' : 'Desuscrito'}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <CalendarDays className="w-3 h-3" />
                         <span>Suscrito: {formatDate(subscriber.subscribed_at)}</span>
@@ -312,26 +312,28 @@ export function NewsletterManager() {
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     {subscriber.status === 'active' && (
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="outline" size="sm">
-                            <UserMinus className="w-4 h-4" />
+                          <Button variant="outline" size="sm" className="text-xs">
+                            <UserMinus className="w-3 h-3 sm:w-4 sm:h-4" />
+                            <span className="hidden sm:inline ml-1">Desuscribir</span>
                           </Button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent>
+                        <AlertDialogContent className="mx-4 w-full sm:max-w-lg">
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Desuscribir usuario</AlertDialogTitle>
-                            <AlertDialogDescription>
+                            <AlertDialogTitle className="text-base sm:text-lg">Desuscribir usuario</AlertDialogTitle>
+                            <AlertDialogDescription className="text-sm">
                               ¿Estás seguro de que quieres desuscribir a {subscriber.email}? 
                               Esta acción se puede revertir.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                            <AlertDialogCancel className="w-full sm:w-auto">Cancelar</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => handleUnsubscribe(subscriber.id!, subscriber.email)}
+                              className="w-full sm:w-auto"
                             >
                               Desuscribir
                             </AlertDialogAction>

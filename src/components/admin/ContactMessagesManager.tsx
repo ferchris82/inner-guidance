@@ -224,75 +224,76 @@ export function ContactMessagesManager() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-peaceful p-6">
+    <div className="min-h-screen bg-gradient-peaceful p-3 sm:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-heading font-bold text-primary mb-2">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-4xl font-heading font-bold text-primary mb-2">
             Mensajes de Contacto
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Administra los mensajes recibidos a través del formulario de contacto
           </p>
         </div>
 
         {messages.length === 0 ? (
           <Card className="shadow-peaceful">
-            <CardContent className="p-12 text-center">
-              <MessageSquare className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <h3 className="text-xl font-heading font-semibold mb-2 text-muted-foreground">
+            <CardContent className="p-8 sm:p-12 text-center">
+              <MessageSquare className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+              <h3 className="text-lg sm:text-xl font-heading font-semibold mb-2 text-muted-foreground">
                 No hay mensajes
               </h3>
-              <p className="text-muted-foreground">
+              <p className="text-sm sm:text-base text-muted-foreground">
                 Los mensajes de contacto aparecerán aquí cuando los visitantes envíen el formulario.
               </p>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-4">
+          <div className="grid gap-3 sm:gap-4">
             {messages.map((message) => (
               <Card key={message.id} className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-start space-x-4 flex-1">
-                      <div className="bg-gradient-golden p-2 rounded-full">
-                        <User className="w-5 h-5 text-white" />
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+                    <div className="flex items-start space-x-3 sm:space-x-4 flex-1 min-w-0">
+                      <div className="bg-gradient-golden p-1.5 sm:p-2 rounded-full flex-shrink-0">
+                        <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <h3 className="text-lg font-heading font-semibold text-primary">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                          <h3 className="text-base sm:text-lg font-heading font-semibold text-primary truncate">
                             {message.name}
                           </h3>
                           {getStatusBadge(message.status)}
                         </div>
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-3">
-                          <div className="flex items-center space-x-1">
-                            <Mail className="w-4 h-4" />
-                            <span>{message.email}</span>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3">
+                          <div className="flex items-center space-x-1 min-w-0">
+                            <Mail className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                            <span className="truncate">{message.email}</span>
                           </div>
-                          <div className="flex items-center space-x-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>{formatDate(message.created_at!)}</span>
+                          <div className="flex items-center space-x-1 flex-shrink-0">
+                            <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+                            <span className="text-nowrap">{formatDate(message.created_at!)}</span>
                           </div>
                         </div>
-                        <div className="mb-3">
+                        <div className="mb-2 sm:mb-3">
                           <Badge variant="outline" className="text-xs">
                             {getServiceName(message.service)}
                           </Badge>
                         </div>
-                        <p className="text-muted-foreground line-clamp-2">
+                        <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
                           {message.message}
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-col gap-2 ml-4">
+                    <div className="flex flex-row sm:flex-col gap-2 justify-end">
                       <Button
                         onClick={() => handleViewMessage(message)}
                         variant="outline"
                         size="sm"
+                        className="flex-1 sm:flex-none text-xs"
                       >
-                        <Eye className="w-4 h-4 mr-2" />
-                        Ver completo
+                        <Eye className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Ver completo</span>
                       </Button>
                       
                       {message.status === 'nuevo' && (
@@ -300,9 +301,10 @@ export function ContactMessagesManager() {
                           onClick={() => handleMarkAsRead(message.id!)}
                           variant="secondary"
                           size="sm"
+                          className="flex-1 sm:flex-none text-xs"
                         >
-                          <CheckCircle className="w-4 h-4 mr-2" />
-                          Marcar leído
+                          <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                          <span className="hidden sm:inline">Marcar leído</span>
                         </Button>
                       )}
                       
@@ -311,10 +313,10 @@ export function ContactMessagesManager() {
                           onClick={() => handleMarkAsResponded(message.id!)}
                           variant="default"
                           size="sm"
-                          className="bg-green-600 hover:bg-green-700"
+                          className="bg-green-600 hover:bg-green-700 flex-1 sm:flex-none text-xs"
                         >
-                          <CheckCircle className="w-4 h-4 mr-2" />
-                          Respondido
+                          <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                          <span className="hidden sm:inline">Respondido</span>
                         </Button>
                       )}
                       
@@ -336,43 +338,43 @@ export function ContactMessagesManager() {
 
         {/* Modal para ver mensaje completo */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl mx-4 w-full sm:max-w-2xl">
             {selectedMessage && (
               <>
                 <DialogHeader>
-                  <DialogTitle className="flex items-center space-x-3">
+                  <DialogTitle className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-base sm:text-lg">
                     <span>Mensaje de {selectedMessage.name}</span>
                     {getStatusBadge(selectedMessage.status)}
                   </DialogTitle>
                 </DialogHeader>
                 
                 <div className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                      <Label className="text-sm font-medium text-muted-foreground">Email</Label>
-                      <p className="text-primary">{selectedMessage.email}</p>
+                      <Label className="text-xs sm:text-sm font-medium text-muted-foreground">Email</Label>
+                      <p className="text-sm sm:text-base text-primary break-all">{selectedMessage.email}</p>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium text-muted-foreground">Servicio de interés</Label>
-                      <p className="text-primary">{getServiceName(selectedMessage.service)}</p>
+                      <Label className="text-xs sm:text-sm font-medium text-muted-foreground">Servicio de interés</Label>
+                      <p className="text-sm sm:text-base text-primary">{getServiceName(selectedMessage.service)}</p>
                     </div>
                   </div>
                   
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Fecha</Label>
-                    <p className="text-primary">{formatDate(selectedMessage.created_at!)}</p>
+                    <Label className="text-xs sm:text-sm font-medium text-muted-foreground">Fecha</Label>
+                    <p className="text-sm sm:text-base text-primary">{formatDate(selectedMessage.created_at!)}</p>
                   </div>
 
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Mensaje</Label>
-                    <div className="bg-muted/20 p-4 rounded-lg mt-2">
-                      <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+                    <Label className="text-xs sm:text-sm font-medium text-muted-foreground">Mensaje</Label>
+                    <div className="bg-muted/20 p-3 sm:p-4 rounded-lg mt-2">
+                      <p className="text-sm sm:text-base text-foreground leading-relaxed whitespace-pre-wrap">
                         {selectedMessage.message}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex justify-end space-x-2 pt-4 border-t">
+                  <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-2 pt-4 border-t">
                     {selectedMessage.status !== 'respondido' && (
                       <Button
                         onClick={() => handleMarkAsResponded(selectedMessage.id!)}
