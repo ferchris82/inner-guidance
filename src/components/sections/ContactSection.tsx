@@ -253,7 +253,7 @@ export function ContactSection() {
                   <Button 
                     variant="outline" 
                     onClick={() => {
-                      window.open('https://wa.me/57313765304?text=Hola%20Maité,%20necesito%20oración%20urgente%20por%20favor', '_blank');
+                      window.open('https://wa.me/573137657304?text=Hola%20Maité,%20necesito%20oración%20urgente%20por%20favor', '_blank');
                     }}
                     className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-spiritual"
                   >

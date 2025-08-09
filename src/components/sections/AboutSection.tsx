@@ -37,20 +37,22 @@ export function AboutSection() {
             </div>
 
             {/* Story Section */}
-            <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              <h3 className="text-3xl font-heading font-bold mb-6 text-primary">
-                Mi Historia Espiritual
-              </h3>
-              <div className="space-y-4 text-lg text-muted-foreground">
-                <p>
-                  Desde que tengo memoria, <strong className="text-violet-brand">la búsqueda de la identidad espiritual ha sido el hilo conductor de mi vida.</strong> Crecí en un entorno religioso cristiano que despertó mi fascinación por lo divino, pero fue al salir del colegio cuando comencé realmente mi camino de búsqueda personal para conectarme con la Fuente, más allá de los sistemas y estructuras.
-                </p>
-                <p>
-                  Durante años exploré diversas corrientes espirituales, tratando de llenar vacíos que ninguna parecía poder llenar por completo. El punto de quiebre llegó a través de un proceso inesperado: <strong className="text-turquoise-brand">cuando llevé a mi hijo mayor a terapia por problemas de conducta, descubrí que era yo quien necesitaba un proceso profundo de transformación.</strong>
-                </p>
-                <p>
-                  Lo que comenzó como un par de sesiones para él, se convirtió en un año y medio de sanidad para mí. Fue allí donde <strong className="text-golden-brand">rompí con estructuras religiosas limitantes y empecé el verdadero descubrimiento de quién soy.</strong>
-                </p>
+            <div className="animate-slide-up flex items-start" style={{ animationDelay: '0.2s' }}>
+              <div className="w-full max-w-md mx-auto">
+                <h3 className="text-3xl font-heading font-bold mb-6 text-primary">
+                  Mi Historia Espiritual
+                </h3>
+                <div className="space-y-4 text-lg text-muted-foreground">
+                  <p>
+                    Desde que tengo memoria, <strong className="text-violet-brand">la búsqueda de la identidad espiritual ha sido el hilo conductor de mi vida.</strong> Crecí en un entorno religioso cristiano que despertó mi fascinación por lo divino, pero fue al salir del colegio cuando comencé realmente mi camino de búsqueda personal para conectarme con la Fuente, más allá de los sistemas y estructuras.
+                  </p>
+                  <p>
+                    Durante años exploré diversas corrientes espirituales, tratando de llenar vacíos que ninguna parecía poder llenar por completo. El punto de quiebre llegó a través de un proceso inesperado: <strong className="text-turquoise-brand">cuando llevé a mi hijo mayor a terapia por problemas de conducta, descubrí que era yo quien necesitaba un proceso profundo de transformación.</strong>
+                  </p>
+                  <p>
+                    Lo que comenzó como un par de sesiones para él, se convirtió en un año y medio de sanidad para mí. Fue allí donde <strong className="text-golden-brand">rompí con estructuras religiosas limitantes y empecé el verdadero descubrimiento de quién soy.</strong>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
