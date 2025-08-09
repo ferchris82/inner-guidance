@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,6 +18,9 @@ import {
 } from 'lucide-react';
 import { saveBlogPost, updateBlogPost } from '@/utils/blogSupabase';
 import { BlogPost } from '@/lib/supabase';
+import { getEditorConfig, saveEditorConfig, applyToolbarStyles, EditorConfig } from '@/utils/editorConfig';
+import { ToolbarConfigPanel } from './ToolbarConfigPanel';
+import { getCategories, Category } from '@/utils/categories';
 
 interface BlogEditorProps {
   editingPost?: BlogPost | null;
@@ -38,7 +41,67 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [toolbarConfig, setToolbarConfig] = useState<EditorConfig>(getEditorConfig());
+  const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const quillRef = useRef<ReactQuill>(null);
+
+  // Aplicar configuración de toolbar
+  useEffect(() => {
+    const applyToolbarConfiguration = () => {
+      applyToolbarStyles(toolbarConfig);
+    };
+
+    // Aplicar estilos cuando el componente se monte o cambie la configuración
+    const timer = setTimeout(applyToolbarConfiguration, 100);
+    
+    // Limpiar el timer al desmontar
+    return () => clearTimeout(timer);
+  }, [isPreviewMode, toolbarConfig]); // Re-aplicar cuando cambie el modo de vista o configuración
+
+  // Cargar categorías desde Supabase
+  useEffect(() => {
+    const loadCategories = async () => {
+      setCategoriesLoading(true);
+      try {
+        const data = await getCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    loadCategories();
+  }, []);
+
+  // Escuchar cambios en las categorías - ya no es necesario con Supabase
+  // pero mantenemos por compatibilidad
+  useEffect(() => {
+    const handleCategoriesUpdate = async () => {
+      const data = await getCategories();
+      setCategories(data);
+    };
+
+    window.addEventListener('categoriesUpdated', handleCategoriesUpdate);
+    
+    return () => {
+      window.removeEventListener('categoriesUpdated', handleCategoriesUpdate);
+    };
+  }, []);
+
+  // Manejar cambios en la configuración
+  const handleConfigChange = (newConfig: EditorConfig) => {
+    setToolbarConfig(newConfig);
+    saveEditorConfig(newConfig);
+    
+    // Re-aplicar estilos inmediatamente
+    setTimeout(() => {
+      applyToolbarStyles(newConfig);
+    }, 100);
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -162,6 +225,12 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                     {isPreviewMode ? 'Vista Previa' : 'Editor de Contenido'}
                   </CardTitle>
                   <div className="flex items-center gap-2">
+                    <ToolbarConfigPanel
+                      config={toolbarConfig}
+                      onConfigChange={handleConfigChange}
+                      isOpen={isConfigPanelOpen}
+                      onToggle={() => setIsConfigPanelOpen(!isConfigPanelOpen)}
+                    />
                     <Button
                       variant="outline"
                       size="sm"
@@ -258,11 +327,17 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                       <SelectValue placeholder="Seleccionar categoría" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="llamado-divino">Llamado Divino</SelectItem>
-                      <SelectItem value="mensaje-profetico">Mensaje Profético</SelectItem>
-                      <SelectItem value="proposito-divino">Propósito Divino</SelectItem>
-                      <SelectItem value="identidad">Identidad</SelectItem>
-                      <SelectItem value="profecia">Profecía</SelectItem>
+                      {categoriesLoading ? (
+                        <SelectItem value="loading" disabled>Cargando categorías...</SelectItem>
+                      ) : categories.length === 0 ? (
+                        <SelectItem value="empty" disabled>No hay categorías disponibles</SelectItem>
+                      ) : (
+                        categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 </div>

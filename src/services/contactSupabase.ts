@@ -118,19 +118,35 @@ export const markMessageAsResponded = async (messageId: string): Promise<boolean
 // Función para eliminar un mensaje
 export const deleteContactMessage = async (messageId: string): Promise<boolean> => {
   try {
-    const { error } = await supabase
+    console.log('🗑️ Attempting to delete contact message with ID:', messageId);
+    
+    const { data, error } = await supabase
       .from('contact_messages')
       .delete()
-      .eq('id', messageId);
+      .eq('id', messageId)
+      .select(); // Agregamos select para ver qué se eliminó
 
     if (error) {
-      console.error('Error al eliminar mensaje de contacto:', error);
-      throw error;
+      console.error('❌ Error deleting contact message from Supabase:', error);
+      console.error('Error details:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
+      return false;
+    }
+
+    console.log('✅ Successfully deleted from Supabase:', data);
+    
+    if (data && data.length === 0) {
+      console.warn('⚠️ No rows were deleted. Contact message with ID may not exist:', messageId);
+      return false;
     }
 
     return true;
   } catch (error) {
-    console.error('Error en deleteContactMessage:', error);
+    console.error('❌ Exception in deleteContactMessage:', error);
     return false;
   }
 };

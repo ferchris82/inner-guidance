@@ -96,7 +96,7 @@ export function ContactSection() {
               <Card className="shadow-spiritual">
                 <CardHeader>
                   <CardTitle className="text-2xl font-heading text-primary flex items-center">
-                    <Heart className="w-6 h-6 mr-2 icon-golden-gradient" />
+                    <Heart className="w-6 h-6 mr-2 icon-aqua-gradient" />
                     Envíame un mensaje
                   </CardTitle>
                 </CardHeader>
@@ -166,7 +166,7 @@ export function ContactSection() {
                     <Button 
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-gradient-golden hover:shadow-spiritual transition-spiritual disabled:opacity-50"
+                      className="w-full bg-gradient-aqua hover:shadow-spiritual transition-spiritual disabled:opacity-50"
                       size="lg"
                     >
                       <Send className="w-5 h-5 mr-2 text-white" />
@@ -183,7 +183,7 @@ export function ContactSection() {
                 <Card className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
-                      <div className="bg-gradient-golden p-3 rounded-full">
+                      <div className="bg-gradient-aqua p-3 rounded-full">
                         <Mail className="w-6 h-6 text-white" />
                       </div>
                       <div>
@@ -204,7 +204,7 @@ export function ContactSection() {
                 <Card className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
-                      <div className="bg-gradient-golden p-3 rounded-full">
+                      <div className="bg-gradient-aqua p-3 rounded-full">
                         <Clock className="w-6 h-6 text-white" />
                       </div>
                       <div>
@@ -224,7 +224,7 @@ export function ContactSection() {
                 <Card className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
-                      <div className="bg-gradient-golden p-3 rounded-full">
+                      <div className="bg-gradient-aqua p-3 rounded-full">
                         <MapPin className="w-6 h-6 text-white" />
                       </div>
                       <div>
@@ -257,7 +257,7 @@ export function ContactSection() {
                     }}
                     className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-spiritual"
                   >
-                    <Heart className="w-4 h-4 mr-2 icon-golden-gradient" />
+                    <Heart className="w-4 h-4 mr-2 icon-aqua-gradient" />
                     Solicitar oración
                   </Button>
                 </div>

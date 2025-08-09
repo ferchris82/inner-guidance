@@ -117,7 +117,7 @@ export function AboutSection() {
             <div className="grid md:grid-cols-2 gap-8">
               <Card className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
                 <CardContent className="p-6">
-                  <div className="bg-gradient-golden p-3 rounded-full w-fit mb-4">
+                  <div className="bg-gradient-aqua p-3 rounded-full w-fit mb-4">
                     <Shield className="w-6 h-6 text-white" />
                   </div>
                   <h4 className="text-lg font-heading font-semibold mb-3 text-primary">
@@ -131,7 +131,7 @@ export function AboutSection() {
 
               <Card className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
                 <CardContent className="p-6">
-                  <div className="bg-gradient-golden p-3 rounded-full w-fit mb-4">
+                  <div className="bg-gradient-aqua p-3 rounded-full w-fit mb-4">
                     <Sparkles className="w-6 h-6 text-white" />
                   </div>
                   <h4 className="text-lg font-heading font-semibold mb-3 text-primary">
@@ -184,7 +184,7 @@ export function AboutSection() {
                   className="shadow-peaceful hover:shadow-spiritual transition-spiritual"
                 >
                   <CardContent className="p-6 text-center">
-                    <div className="bg-gradient-golden p-3 rounded-full w-fit mx-auto mb-4">
+                    <div className="bg-gradient-aqua p-3 rounded-full w-fit mx-auto mb-4">
                       <item.icon className="w-6 h-6 text-white" />
                     </div>
                     <h4 className="text-lg font-heading font-semibold mb-2 text-primary">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BlogEditor } from './BlogEditor';
 import { BlogManager } from './BlogManager';
+import { CategoryManager } from './CategoryManager';
 import { SocialManager } from './SocialManager';
 import { ContactMessagesManager } from '@/components/admin/ContactMessagesManager';
 import { NewsletterManager } from '@/components/admin/NewsletterManager';
@@ -14,13 +15,14 @@ import {
   ArrowLeft,
   Globe,
   MessageSquare,
-  Mail
+  Mail,
+  Tag
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { BlogPost } from '@/lib/supabase';
 import { getBlogPosts } from '@/utils/blogSupabase';
 
-type DashboardView = 'overview' | 'editor' | 'manager' | 'social' | 'contacts' | 'newsletter';
+type DashboardView = 'overview' | 'editor' | 'manager' | 'categories' | 'social' | 'contacts' | 'newsletter';
 
 export function BlogDashboard() {
   const [currentView, setCurrentView] = useState<DashboardView>('overview');
@@ -29,6 +31,29 @@ export function BlogDashboard() {
   const [recentArticles, setRecentArticles] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Manejar navegación del admin y reset
+  useEffect(() => {
+    // Verificar si hay una vista específica guardada
+    const savedView = sessionStorage.getItem('adminView');
+    const forceReset = sessionStorage.getItem('forceReset');
+    
+    if (forceReset === 'true') {
+      // Resetear al dashboard principal
+      setCurrentView('overview');
+      setIsEditing(false);
+      setEditingPost(null);
+      sessionStorage.removeItem('forceReset');
+    } else if (savedView && ['overview', 'editor', 'manager', 'categories', 'social', 'contacts', 'newsletter'].includes(savedView)) {
+      setCurrentView(savedView as DashboardView);
+    }
+  }, []);
+
+  // Función helper para cambiar vista y guardar en sessionStorage
+  const changeView = (view: DashboardView) => {
+    setCurrentView(view);
+    sessionStorage.setItem('adminView', view);
+  };
 
   // Cargar artículos recientes al montar el componente
   useEffect(() => {
@@ -118,41 +143,47 @@ export function BlogDashboard() {
   const handleNewPost = () => {
     setEditingPost(null);
     setIsEditing(true);
-    setCurrentView('editor');
+    changeView('editor');
   };
 
   const handleEditPost = (post: BlogPost) => {
     setEditingPost(post);
     setIsEditing(true);
-    setCurrentView('editor');
+    changeView('editor');
   };
 
   const handleBackToOverview = () => {
-    setCurrentView('overview');
+    changeView('overview');
     setIsEditing(false);
     setEditingPost(null);
   };
 
   const handleBackToManager = () => {
-    setCurrentView('manager');
+    changeView('manager');
     setIsEditing(false);
     setEditingPost(null);
   };
 
   const handleSocialManager = () => {
-    setCurrentView('social');
+    changeView('social');
     setIsEditing(false);
     setEditingPost(null);
   };
 
   const handleContactsManager = () => {
-    setCurrentView('contacts');
+    changeView('contacts');
     setIsEditing(false);
     setEditingPost(null);
   };
 
   const handleNewsletterManager = () => {
-    setCurrentView('newsletter');
+    changeView('newsletter');
+    setIsEditing(false);
+    setEditingPost(null);
+  };
+
+  const handleCategoriesManager = () => {
+    changeView('categories');
     setIsEditing(false);
     setEditingPost(null);
   };
@@ -211,6 +242,26 @@ export function BlogDashboard() {
           </Button>
         </div>
         <BlogManager onEditPost={handleEditPost} onNewPost={handleNewPost} />
+      </div>
+    );
+  }
+
+  if (currentView === 'categories') {
+    return (
+      <div className="min-h-screen bg-gradient-peaceful">
+        <div className="p-4">
+          <Button
+            variant="ghost"
+            onClick={handleBackToOverview}
+            className="mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver al Dashboard
+          </Button>
+        </div>
+        <div className="max-w-6xl mx-auto p-4">
+          <CategoryManager />
+        </div>
       </div>
     );
   }
@@ -300,7 +351,7 @@ export function BlogDashboard() {
         </div>
 
         {/* Acciones Rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -332,6 +383,24 @@ export function BlogDashboard() {
                 <h3 className="text-lg font-medium mb-2">Gestionar Artículos</h3>
                 <p className="text-sm text-muted-foreground">
                   Edita, organiza y administra tus publicaciones
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Card 
+              className="shadow-peaceful hover:shadow-spiritual transition-spiritual cursor-pointer"
+              onClick={handleCategoriesManager}
+            >
+              <CardContent className="p-6 text-center">
+                <Tag className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">Categorías</h3>
+                <p className="text-sm text-muted-foreground">
+                  Organiza tu contenido por temas espirituales
                 </p>
               </CardContent>
             </Card>

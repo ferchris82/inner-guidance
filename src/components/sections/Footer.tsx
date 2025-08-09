@@ -146,19 +146,19 @@ export function Footer() {
               </h4>
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
-                  <Mail className="w-4 h-4 icon-golden-gradient" />
+                  <Mail className="w-4 h-4 icon-aqua-gradient" />
                   <span className="text-primary-foreground/80 text-sm">
                     maitegutierrez.monitora@gmail.com
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Clock className="w-4 h-4 icon-golden-gradient" />
+                  <Clock className="w-4 h-4 icon-aqua-gradient" />
                   <span className="text-primary-foreground/80 text-sm">
                     Lun-Vie: 9AM-6PM
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <MapPin className="w-4 h-4 icon-golden-gradient" />
+                  <MapPin className="w-4 h-4 icon-aqua-gradient" />
                   <span className="text-primary-foreground/80 text-sm">
                     Consultas virtuales
                   </span>

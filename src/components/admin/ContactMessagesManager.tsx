@@ -21,6 +21,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { 
   getAllContactMessages, 
   markMessageAsRead, 
@@ -35,6 +45,7 @@ export function ContactMessagesManager() {
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteMessage, setDeleteMessage] = useState<ContactMessage | null>(null);
   const { toast } = useToast();
 
   const loadMessages = useCallback(async () => {
@@ -76,6 +87,29 @@ export function ContactMessagesManager() {
     }
   };
 
+  const handleMarkAsRead = async (messageId: string) => {
+    const success = await markMessageAsRead(messageId);
+    if (success) {
+      setMessages(prev => 
+        prev.map(m => 
+          m.id === messageId 
+            ? { ...m, status: 'leido' as const }
+            : m
+        )
+      );
+      toast({
+        title: "✅ Mensaje marcado como leído",
+        description: "El estado del mensaje se ha actualizado",
+      });
+    } else {
+      toast({
+        title: "❌ Error",
+        description: "No se pudo actualizar el estado del mensaje",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleMarkAsResponded = async (messageId: string) => {
     const success = await markMessageAsResponded(messageId);
     if (success) {
@@ -87,26 +121,55 @@ export function ContactMessagesManager() {
         )
       );
       toast({
-        title: "Mensaje marcado como respondido",
+        title: "✅ Mensaje marcado como respondido",
         description: "El estado del mensaje se ha actualizado correctamente",
       });
       setIsModalOpen(false);
+    } else {
+      toast({
+        title: "❌ Error",
+        description: "No se pudo actualizar el estado del mensaje",
+        variant: "destructive"
+      });
     }
   };
 
-  const handleDeleteMessage = async (messageId: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar este mensaje?')) {
-      return;
-    }
+  const handleDeleteMessage = (message: ContactMessage) => {
+    setDeleteMessage(message);
+  };
+
+  const confirmDeleteMessage = async () => {
+    if (!deleteMessage) return;
     
-    const success = await deleteContactMessage(messageId);
-    if (success) {
-      setMessages(prev => prev.filter(m => m.id !== messageId));
+    console.log('🗑️ ContactMessagesManager: Attempting to delete message:', deleteMessage.id);
+    
+    try {
+      const success = await deleteContactMessage(deleteMessage.id!);
+      console.log('🗑️ Delete operation result:', success);
+      
+      if (success) {
+        // Recargar mensajes desde la base de datos para asegurar sincronización
+        await loadMessages();
+        setDeleteMessage(null);
+        toast({
+          title: "✅ Mensaje eliminado",
+          description: "El mensaje se ha eliminado correctamente",
+        });
+        setIsModalOpen(false);
+      } else {
+        toast({
+          title: "❌ Error al eliminar",
+          description: "No se pudo eliminar el mensaje. Revisa la consola para más detalles.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting message:', error);
       toast({
-        title: "Mensaje eliminado",
-        description: "El mensaje se ha eliminado correctamente",
+        title: "❌ Error inesperado",
+        description: "Ocurrió un error al eliminar el mensaje. Revisa la consola para más detalles.",
+        variant: "destructive"
       });
-      setIsModalOpen(false);
     }
   };
 
@@ -222,15 +285,48 @@ export function ContactMessagesManager() {
                         </p>
                       </div>
                     </div>
-                    <Button
-                      onClick={() => handleViewMessage(message)}
-                      variant="outline"
-                      size="sm"
-                      className="ml-4"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Ver completo
-                    </Button>
+                    <div className="flex flex-col gap-2 ml-4">
+                      <Button
+                        onClick={() => handleViewMessage(message)}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Ver completo
+                      </Button>
+                      
+                      {message.status === 'nuevo' && (
+                        <Button
+                          onClick={() => handleMarkAsRead(message.id!)}
+                          variant="secondary"
+                          size="sm"
+                        >
+                          <CheckCircle className="w-4 h-4 mr-2" />
+                          Marcar leído
+                        </Button>
+                      )}
+                      
+                      {message.status !== 'respondido' && (
+                        <Button
+                          onClick={() => handleMarkAsResponded(message.id!)}
+                          variant="default"
+                          size="sm"
+                          className="bg-green-600 hover:bg-green-700"
+                        >
+                          <CheckCircle className="w-4 h-4 mr-2" />
+                          Respondido
+                        </Button>
+                      )}
+                      
+                      <Button
+                        onClick={() => handleDeleteMessage(message)}
+                        variant="destructive"
+                        size="sm"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Eliminar
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -287,7 +383,7 @@ export function ContactMessagesManager() {
                       </Button>
                     )}
                     <Button
-                      onClick={() => handleDeleteMessage(selectedMessage.id!)}
+                      onClick={() => handleDeleteMessage(selectedMessage)}
                       variant="destructive"
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
@@ -299,6 +395,35 @@ export function ContactMessagesManager() {
             )}
           </DialogContent>
         </Dialog>
+
+        {/* AlertDialog para confirmar eliminación */}
+        <AlertDialog open={!!deleteMessage} onOpenChange={() => setDeleteMessage(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center">
+                <AlertCircle className="w-5 h-5 text-destructive mr-2" />
+                Confirmar Eliminación
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                ¿Estás seguro que deseas eliminar el mensaje de "{deleteMessage?.name}"? 
+                Esta acción no se puede deshacer.
+                <div className="mt-2 p-3 bg-muted rounded text-sm">
+                  <strong>Email:</strong> {deleteMessage?.email}<br />
+                  <strong>Asunto:</strong> {deleteMessage?.service}
+                </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={confirmDeleteMessage}
+                className="bg-destructive hover:bg-destructive/90"
+              >
+                Eliminar Mensaje
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

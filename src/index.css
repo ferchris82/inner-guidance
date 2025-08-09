@@ -97,7 +97,7 @@ All colors MUST be HSL.
     --muted: 250 82% 15%; /* Dark muted indigo */
     --muted-foreground: 250 82% 65%; /* Light indigo text */
 
-    --accent: 43 75% 45%; /* Golden yellow #C38820 */
+    --accent: 174 70% 41%; /* Aqua turquoise #20B2AA */
     --accent-foreground: 250 82% 8%; /* Dark indigo */
 
     --destructive: 0 62.8% 60%;
@@ -194,30 +194,42 @@ All colors MUST be HSL.
     line-height: 1.15 !important;
   }
 
-  /* Golden gradient for all icons */
-  .icon-golden-gradient {
-    background: linear-gradient(135deg, #C38820 0%, #E6A835 50%, #C38820 100%);
+  /* Aguamarina-turquesa gradient for all icons */
+  .icon-aqua-gradient {
+    background: linear-gradient(135deg, #20B2AA 0%, #40E0D0 50%, #00CED1 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    /* Stroke color for Lucide icons */
+    stroke: #40E0D0;
   }
 
-  /* Alternative solid golden color for icons that don't work well with gradient */
-  .icon-golden-solid {
-    color: #C38820;
+  /* Golden gradient for decorative floating elements */
+  .icon-golden-gradient {
+    background: linear-gradient(135deg, #C38820 0%, #E6A835 50%, #DAA520 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    /* Stroke color for Lucide icons */
+    stroke: #E6A835;
   }
 
-  /* Golden gradient background for icon containers */
-  .bg-gradient-golden {
-    background: linear-gradient(135deg, #C38820 0%, #E6A835 50%, #C38820 100%);
+  /* Alternative solid aqua color for icons that don't work well with gradient */
+  .icon-aqua-solid {
+    color: #20B2AA;
+  }
+
+  /* Aguamarina-turquesa gradient background for icon containers */
+  .bg-gradient-aqua {
+    background: linear-gradient(135deg, #20B2AA 0%, #40E0D0 50%, #00CED1 100%);
   }
 
   .bg-violet-brand {
     background-color: hsl(270 100% 66%);
   }
 
-  .bg-golden-brand {
-    background-color: hsl(43 75% 45%);
+  .bg-aqua-brand {
+    background-color: hsl(174 70% 41%);
   }
 
   .text-indigo-brand {
@@ -232,8 +244,8 @@ All colors MUST be HSL.
     color: hsl(270 100% 66%);
   }
 
-  .text-golden-brand {
-    color: hsl(43 75% 45%);
+  .text-aqua-brand {
+    color: hsl(174 70% 41%);
   }
 
   .border-indigo-brand {
@@ -248,6 +260,10 @@ All colors MUST be HSL.
     border-color: hsl(270 100% 66%);
   }
 
+  .border-aqua-brand {
+    border-color: hsl(174 70% 41%);
+  }
+
   .border-golden-brand {
     border-color: hsl(43 75% 45%);
   }
@@ -257,21 +273,21 @@ All colors MUST be HSL.
     background: linear-gradient(135deg, hsl(250 82% 26%) 0%, hsl(175 80% 40%) 100%);
   }
 
-  .bg-gradient-violet-golden {
-    background: linear-gradient(135deg, hsl(270 100% 66%) 0%, hsl(43 75% 45%) 100%);
+  .bg-gradient-violet-aqua {
+    background: linear-gradient(135deg, hsl(270 100% 66%) 0%, hsl(174 70% 41%) 100%);
   }
 
   .bg-gradient-brand-full {
-    background: linear-gradient(135deg, hsl(250 82% 26%) 0%, hsl(175 80% 40%) 25%, hsl(270 100% 66%) 50%, hsl(43 75% 45%) 75%, hsl(0 0% 100%) 100%);
+    background: linear-gradient(135deg, hsl(250 82% 26%) 0%, hsl(175 80% 40%) 25%, hsl(270 100% 66%) 50%, hsl(174 70% 41%) 75%, hsl(0 0% 100%) 100%);
   }
 
-  /* Table and line styles using golden color */
-  .border-table-golden {
-    border-color: hsl(43 75% 45%);
+  /* Table and line styles using aqua color */
+  .border-table-aqua {
+    border-color: hsl(174 70% 41%);
   }
 
-  .bg-table-header-golden {
-    background-color: hsl(43 75% 45% / 0.1);
+  .bg-table-header-aqua {
+    background-color: hsl(174 70% 41% / 0.1);
   }
 
   /* Chapter title styles using violet */

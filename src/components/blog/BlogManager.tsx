@@ -15,19 +15,12 @@ import {
 } from 'lucide-react';
 import { getBlogPosts, deleteBlogPost } from '@/utils/blogSupabase';
 import { BlogPost } from '@/lib/supabase';
+import { getCategoryName } from '@/utils/categories';
 
 interface BlogManagerProps {
   onEditPost?: (post: BlogPost) => void;
   onNewPost?: () => void;
 }
-
-const categoryLabels = {
-  'llamado-divino': 'Llamado Divino',
-  'mensaje-profetico': 'Mensaje Profético',
-  'proposito-divino': 'Propósito Divino',
-  'identidad': 'Identidad',
-  'profecia': 'Profecía'
-};
 
 export function BlogManager({ onEditPost, onNewPost }: BlogManagerProps) {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -79,7 +72,7 @@ export function BlogManager({ onEditPost, onNewPost }: BlogManagerProps) {
   };
 
   const getCategoryLabel = (category: string) => {
-    return categoryLabels[category as keyof typeof categoryLabels] || category;
+    return getCategoryName(category);
   };
 
   if (loading) {

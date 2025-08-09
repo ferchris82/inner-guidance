@@ -41,12 +41,24 @@ export function Navigation() {
   };
 
   const handleAdminNavigation = () => {
-    // Limpiar cualquier estado previo y navegar al dashboard principal
-    sessionStorage.removeItem('adminView');
-    sessionStorage.removeItem('editingPost');
-    // Agregar bandera temporal para forzar reset del dashboard
-    sessionStorage.setItem('forceReset', 'true');
-    navigate('/admin');
+    if (location.pathname === '/admin') {
+      // Si ya estamos en admin, resetear al dashboard principal
+      sessionStorage.setItem('adminView', 'overview');
+      sessionStorage.removeItem('editingPost');
+      sessionStorage.setItem('forceReset', 'true');
+      // Navegar a la misma ruta para forzar re-renderizado
+      navigate('/admin', { replace: true });
+      window.location.hash = '#dashboard'; // Truco para forzar actualización
+      setTimeout(() => {
+        window.location.hash = '';
+      }, 100);
+    } else {
+      // Si no estamos en admin, navegar normalmente
+      sessionStorage.removeItem('adminView');
+      sessionStorage.removeItem('editingPost');
+      sessionStorage.setItem('forceReset', 'true');
+      navigate('/admin');
+    }
     setIsOpen(false);
   };
 
@@ -98,7 +110,7 @@ export function Navigation() {
             </button>
             <Button 
               onClick={() => scrollToSection('contacto')}
-              className="bg-gradient-golden hover:shadow-spiritual transition-spiritual"
+              className="bg-gradient-aqua hover:shadow-spiritual transition-spiritual"
             >
               Contacto
             </Button>

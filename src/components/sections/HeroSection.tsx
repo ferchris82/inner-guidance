@@ -90,7 +90,7 @@ export function HeroSection() {
             <Button 
               onClick={scrollToContact}
               size="lg"
-              className="bg-gradient-golden hover:shadow-spiritual transition-spiritual px-8 py-4 text-lg font-semibold animate-glow"
+              className="bg-gradient-aqua hover:shadow-spiritual transition-spiritual px-8 py-4 text-lg font-semibold animate-glow"
             >
               Comenzar mi viaje espiritual
             </Button>
@@ -123,7 +123,7 @@ export function HeroSection() {
                   className="text-center animate-slide-up hover:transform hover:scale-105 transition-all duration-300"
                   style={{ animationDelay: `${(index + 1) * 0.2}s` }}
                 >
-                  <div className="bg-gradient-violet-golden p-4 rounded-full w-fit mx-auto mb-3 hover:shadow-spiritual transition-shadow">
+                  <div className="bg-gradient-violet-aqua p-4 rounded-full w-fit mx-auto mb-3 hover:shadow-spiritual transition-shadow">
                     <IconComponent className="w-8 h-8 text-white" />
                   </div>
                   <div className="text-muted-foreground font-medium">{link.platform}</div>
@@ -134,7 +134,7 @@ export function HeroSection() {
             {socialLinks.length === 0 && (
               <div className="col-span-full text-center py-8">
                 <div className="text-muted-foreground">
-                  <Globe className="w-12 h-12 mx-auto mb-2 opacity-30 icon-golden-gradient" />
+                  <Globe className="w-12 h-12 mx-auto mb-2 opacity-30 icon-aqua-gradient" />
                   <p className="text-sm opacity-70">Conéctate conmigo en mis redes sociales</p>
                   <p className="text-xs opacity-50 mt-1">Pronto estarán disponibles</p>
                 </div>
@@ -150,7 +150,7 @@ export function HeroSection() {
           onClick={scrollToNext}
           className="text-muted-foreground hover:text-primary transition-spiritual"
         >
-          <ArrowDown className="w-6 h-6 icon-golden-gradient" />
+          <ArrowDown className="w-6 h-6 icon-aqua-gradient" />
         </button>
       </div>
     </section>

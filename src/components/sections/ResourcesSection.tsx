@@ -137,7 +137,7 @@ export function ResourcesSection() {
                 )}
                 
                 <CardHeader className="text-center pb-4">
-                  <div className="bg-gradient-golden p-4 rounded-full w-fit mx-auto mb-4">
+                  <div className="bg-gradient-aqua p-4 rounded-full w-fit mx-auto mb-4">
                     <resource.icon className="w-8 h-8 text-white" />
                   </div>
                   <CardTitle className="text-xl font-heading text-primary mb-2">
@@ -159,7 +159,7 @@ export function ResourcesSection() {
                         : 'bg-primary hover:bg-primary/90'
                     }`}
                   >
-                    <Download className="w-4 h-4 mr-2 icon-golden-gradient" />
+                    <Download className="w-4 h-4 mr-2 icon-aqua-gradient" />
                     {resource.action}
                   </Button>
                 </CardContent>
