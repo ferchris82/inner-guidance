@@ -25,6 +25,7 @@ export type BlogPost = {
   featured_image?: string
   read_time: string
   featured: boolean
+  is_draft: boolean
   created_at: string
   updated_at: string
 }

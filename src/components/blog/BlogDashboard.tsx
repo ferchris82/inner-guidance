@@ -65,8 +65,10 @@ export function BlogDashboard() {
         setIsLoading(true);
         setError(null);
         const articles = await getBlogPosts();
+        // Filtrar solo los artículos publicados
+        const publishedArticles = articles.filter(a => !a.is_draft);
         // Ordenar por fecha de creación (más recientes primero) y tomar solo los primeros 3
-        const sortedArticles = articles
+        const sortedArticles = publishedArticles
           .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
           .slice(0, 3);
         setRecentArticles(sortedArticles);
@@ -573,4 +575,6 @@ export function BlogDashboard() {
     </div>
   );
 }
+
+
 

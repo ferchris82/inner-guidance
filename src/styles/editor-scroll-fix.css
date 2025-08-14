@@ -1,0 +1,71 @@
+/* Prevenir scroll no deseado en el editor Quill */
+.ql-toolbar {
+  /* Prevenir que el toolbar cause scroll */
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+/* Prevenir scroll cuando se aplican formatos */
+.ql-editor {
+  /* Mantener el editor estable durante las operaciones de formato */
+  scroll-behavior: auto !important;
+}
+
+/* Prevenir scroll en elementos de color */
+.ql-color,
+.ql-background {
+  /* Prevenir que los elementos de color causen scroll */
+  position: relative !important;
+}
+
+/* Prevenir scroll en el contenedor del editor */
+.ql-container {
+  /* Mantener el contenedor estable */
+  overflow: auto !important;
+  scroll-behavior: auto !important;
+}
+
+/* Prevenir scroll en el wrapper de ReactQuill */
+.quill {
+  /* Mantener el wrapper estable */
+  position: relative !important;
+}
+
+/* Prevenir scroll en elementos de selección de color */
+.ql-picker {
+  /* Prevenir que los pickers causen scroll */
+  position: relative !important;
+}
+
+/* Prevenir scroll en elementos de color específicos */
+.ql-color .ql-picker-options,
+.ql-background .ql-picker-options {
+  /* Prevenir que los menús de color causen scroll */
+  position: absolute !important;
+  z-index: 1001 !important;
+}
+
+/* Prevenir scroll en elementos de formato */
+.ql-formats {
+  /* Mantener los formatos estables */
+  position: relative !important;
+}
+
+/* Prevenir scroll en botones del toolbar */
+.ql-toolbar button {
+  /* Prevenir que los botones causen scroll */
+  position: relative !important;
+}
+
+/* Prevenir scroll en elementos de selección */
+.ql-picker-label {
+  /* Prevenir que las etiquetas causen scroll */
+  position: relative !important;
+}
+
+/* Prevenir scroll en elementos de opciones */
+.ql-picker-options {
+  /* Prevenir que las opciones causen scroll */
+  position: absolute !important;
+  z-index: 1001 !important;
+}

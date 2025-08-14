@@ -16,6 +16,7 @@ import {
 import { getBlogPosts, deleteBlogPost } from '@/utils/blogSupabase';
 import { BlogPost } from '@/lib/supabase';
 import { getCategoryName } from '@/utils/categories';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 
 interface BlogManagerProps {
   onEditPost?: (post: BlogPost) => void;
@@ -26,6 +27,8 @@ export function BlogManager({ onEditPost, onNewPost }: BlogManagerProps) {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [postToDelete, setPostToDelete] = useState<BlogPost | null>(null);
 
   const loadPosts = async () => {
     try {
@@ -46,19 +49,25 @@ export function BlogManager({ onEditPost, onNewPost }: BlogManagerProps) {
   }, []);
 
   const handleDelete = async (postId: string) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este artículo?')) {
-      try {
-        const success = await deleteBlogPost(postId);
-        if (success) {
-          // Recargar la lista de posts
-          await loadPosts();
-        } else {
-          alert('Error al eliminar el artículo');
-        }
-      } catch (error) {
-        console.error('Error eliminando post:', error);
+    const post = posts.find(p => p.id === postId) || null;
+    setPostToDelete(post);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!postToDelete) return;
+    try {
+      const success = await deleteBlogPost(postToDelete.id);
+      if (success) {
+        await loadPosts();
+        setDeleteDialogOpen(false);
+        setPostToDelete(null);
+      } else {
         alert('Error al eliminar el artículo');
       }
+    } catch (error) {
+      console.error('Error eliminando post:', error);
+      alert('Error al eliminar el artículo');
     }
   };
 
@@ -187,13 +196,21 @@ export function BlogManager({ onEditPost, onNewPost }: BlogManagerProps) {
             {posts.map((post) => (
               <Card key={post.id} className="shadow-peaceful hover:shadow-spiritual transition-spiritual">
                 <CardHeader className="pb-3 sm:pb-4">
-                  <div className="flex justify-between items-start mb-2">
+                  <div className="flex justify-between items-start mb-2 gap-2">
                     <Badge variant="outline" className="text-xs">
                       {getCategoryLabel(post.category)}
                     </Badge>
-                    {post.featured && (
-                      <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                    )}
+                    <div className="flex gap-1 items-center">
+                      {post.featured && (
+                        <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                      )}
+                      <Badge
+                        className={`text-xs ${post.is_draft ? 'bg-yellow-100 text-yellow-800 border-yellow-300' : 'bg-green-100 text-green-800 border-green-300'}`}
+                        variant="outline"
+                      >
+                        {post.is_draft ? 'Borrador' : 'Publicado'}
+                      </Badge>
+                    </div>
                   </div>
                   <CardTitle className="line-clamp-2 text-base sm:text-lg">
                     {post.title}
@@ -258,6 +275,24 @@ export function BlogManager({ onEditPost, onNewPost }: BlogManagerProps) {
             </CardContent>
           </Card>
         )}
+
+        {/* Dialog de confirmación para eliminar */}
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>¿Eliminar artículo?</DialogTitle>
+            </DialogHeader>
+            <div className="mb-4">
+              ¿Estás seguro de que quieres eliminar el artículo <b>{postToDelete?.title || 'Sin título'}</b>?
+            </div>
+            <div className="flex gap-2 justify-end">
+              <DialogClose asChild>
+                <Button variant="outline">Cancelar</Button>
+              </DialogClose>
+              <Button variant="destructive" onClick={confirmDelete}>Eliminar</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

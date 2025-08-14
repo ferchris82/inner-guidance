@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -16,11 +15,12 @@ import {
   Settings, 
   FileText
 } from 'lucide-react';
-import { saveBlogPost, updateBlogPost } from '@/utils/blogSupabase';
+import { saveBlogPost, updateBlogPost, getBlogPosts } from '@/utils/blogSupabase';
 import { BlogPost } from '@/lib/supabase';
-import { getEditorConfig, saveEditorConfig, applyToolbarStyles, EditorConfig } from '@/utils/editorConfig';
+// import { getEditorConfig, saveEditorConfig, applyToolbarStyles, EditorConfig } from '@/utils/editorConfig';
 import { ToolbarConfigPanel } from './ToolbarConfigPanel';
 import { getCategories, Category } from '@/utils/categories';
+import { ArticlePreviewModal } from './ArticlePreviewModal';
 
 interface BlogEditorProps {
   editingPost?: BlogPost | null;
@@ -41,24 +41,14 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
-  const [toolbarConfig, setToolbarConfig] = useState<EditorConfig>(getEditorConfig());
-  const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
+  // Eliminada la configuración de posición del toolbar
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [drafts, setDrafts] = useState<BlogPost[]>([]);
   const quillRef = useRef<ReactQuill>(null);
 
-  // Aplicar configuración de toolbar
-  useEffect(() => {
-    const applyToolbarConfiguration = () => {
-      applyToolbarStyles(toolbarConfig);
-    };
-
-    // Aplicar estilos cuando el componente se monte o cambie la configuración
-    const timer = setTimeout(applyToolbarConfiguration, 100);
-    
-    // Limpiar el timer al desmontar
-    return () => clearTimeout(timer);
-  }, [isPreviewMode, toolbarConfig]); // Re-aplicar cuando cambie el modo de vista o configuración
+  // Eliminado efecto de configuración de toolbar
 
   // Cargar categorías desde Supabase
   useEffect(() => {
@@ -73,61 +63,88 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
         setCategoriesLoading(false);
       }
     };
-
     loadCategories();
   }, []);
 
-  // Escuchar cambios en las categorías - ya no es necesario con Supabase
-  // pero mantenemos por compatibilidad
+  // Escuchar cambios en las categorías
   useEffect(() => {
     const handleCategoriesUpdate = async () => {
       const data = await getCategories();
       setCategories(data);
     };
-
     window.addEventListener('categoriesUpdated', handleCategoriesUpdate);
-    
     return () => {
       window.removeEventListener('categoriesUpdated', handleCategoriesUpdate);
     };
   }, []);
 
-  // Manejar cambios en la configuración
-  const handleConfigChange = (newConfig: EditorConfig) => {
-    setToolbarConfig(newConfig);
-    saveEditorConfig(newConfig);
-    
-    // Re-aplicar estilos inmediatamente
-    setTimeout(() => {
-      applyToolbarStyles(newConfig);
-    }, 100);
+  // Nuevo: id del borrador en edición
+  const [draftId, setDraftId] = useState<string | null>(editingPost?.id || null);
+
+  // Guardar automáticamente como borrador al editar
+  useEffect(() => {
+    // No guardar si se está editando un post existente (ya publicado)
+    if (editingPost) return;
+    // No guardar si el título y contenido están vacíos
+    if (!blogPost.title && !blogPost.content) return;
+    const timeout = setTimeout(async () => {
+      // Si ya hay un borrador, actualizarlo
+      if (draftId) {
+        const updated = await updateBlogPost(draftId, blogPost, true);
+        if (updated) setDraftId(updated.id);
+      } else {
+        // Si no, crear uno nuevo
+        const saved = await saveBlogPost(blogPost, true);
+        if (saved) setDraftId(saved.id);
+      }
+    }, 1200); // Espera 1.2s tras la última edición
+    return () => clearTimeout(timeout);
+  }, [blogPost, editingPost]);
+
+  // Cargar borradores al montar el componente
+  useEffect(() => {
+    async function fetchDrafts() {
+      const allPosts = await getBlogPosts();
+      setDrafts(allPosts.filter(post => post.is_draft));
+    }
+    fetchDrafts();
+  }, []);
+
+  // Función para cargar un borrador en el editor
+  const handleLoadDraft = (draft: BlogPost) => {
+    setBlogPost({
+      title: draft.title,
+      excerpt: draft.excerpt,
+      content: draft.content,
+      category: draft.category,
+      author: draft.author,
+      featured_image: draft.featured_image || '',
+      read_time: draft.read_time,
+      featured: draft.featured,
+    });
+    setDraftId(draft.id);
   };
 
+  // Al guardar, publicar el artículo (is_draft: false)
   const handleSave = async () => {
     setIsSaving(true);
     setSaveMessage('');
-    
     try {
-      // Validar campos requeridos
       if (!blogPost.title.trim()) {
         setSaveMessage('Error: El título es requerido');
         setIsSaving(false);
         return;
       }
-      
       if (!blogPost.content.trim()) {
         setSaveMessage('Error: El contenido es requerido');
         setIsSaving(false);
         return;
       }
-      
       if (!blogPost.category) {
         setSaveMessage('Error: Selecciona una categoría');
         setIsSaving(false);
         return;
       }
-
-      // Si no hay excerpt, extraer del contenido
       let excerptToSave = blogPost.excerpt;
       if (!excerptToSave.trim()) {
         const tempDiv = document.createElement('div');
@@ -135,26 +152,25 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
         const plainText = tempDiv.textContent || tempDiv.innerText || '';
         excerptToSave = plainText.substring(0, 150) + (plainText.length > 150 ? '...' : '');
       }
-
-      console.log('💾 Guardando en Supabase...', blogPost);
-      
-      // Guardar en Supabase
-      const result = await saveBlogPost({
-        title: blogPost.title.trim(),
-        excerpt: excerptToSave.trim(),
-        content: blogPost.content,
-        category: blogPost.category,
-        author: blogPost.author,
-        featured_image: blogPost.featured_image || '',
-        read_time: blogPost.read_time,
-        featured: blogPost.featured
-      });
-      
+      let result = null;
+      if (draftId) {
+        // Actualizar el borrador y publicarlo
+        result = await updateBlogPost(draftId, {
+          ...blogPost,
+          excerpt: excerptToSave.trim(),
+        }, false);
+      } else {
+        // Guardar como nuevo artículo publicado
+        result = await saveBlogPost({
+          ...blogPost,
+          excerpt: excerptToSave.trim(),
+        }, false);
+      }
       if (result) {
-        console.log('✅ Guardado exitoso:', result);
         setSaveMessage('¡Artículo guardado exitosamente!');
-        
-        // Limpiar formulario solo si estamos creando un nuevo post
+        setDraftId(null); // Limpiar el id del borrador
+        // Actualizar la lista de borradores para quitar el publicado
+        setDrafts(drafts => drafts.filter(d => d.id !== (result.id || draftId)));
         if (!editingPost) {
           setBlogPost({
             title: '',
@@ -166,18 +182,14 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
             read_time: '5 min',
             featured: false,
           });
-          
-          // Limpiar el editor Quill si existe
           if (quillRef.current) {
             quillRef.current.getEditor().setText('');
           }
         }
       } else {
-        console.error('❌ Error al guardar');
         setSaveMessage('Error al guardar el artículo. Verifica tu conexión a internet.');
       }
     } catch (error) {
-      console.error('❌ Error en handleSave:', error);
       setSaveMessage('Error al guardar el artículo. Revisa la consola para más detalles.');
     } finally {
       setIsSaving(false);
@@ -201,8 +213,28 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
     ],
   };
 
+  const categoryName = categories.find(c => c.id === blogPost.category)?.name || '';
+
+  const handleSaveBeforePreview = async () => {
+    if (!isSaving) {
+      await handleSave();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-3 sm:p-4">
+      {/* Modal de vista previa avanzada */}
+      <ArticlePreviewModal
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+        article={{
+          ...blogPost,
+          created_at: editingPost?.created_at || new Date().toISOString(),
+        }}
+        categoryName={categoryName}
+        onEdit={() => setPreviewOpen(false)}
+        onSaveBeforePreview={handleSaveBeforePreview}
+      />
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-4 sm:mb-8">
@@ -213,7 +245,6 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
             Crea contenido espiritual con total libertad de diseño
           </p>
         </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Panel Principal */}
           <div className="lg:col-span-2">
@@ -225,24 +256,15 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                     {isPreviewMode ? 'Vista Previa' : 'Editor de Contenido'}
                   </CardTitle>
                   <div className="flex flex-wrap items-center gap-2 sm:gap-2">
-                    <div className="order-2 sm:order-1">
-                      <ToolbarConfigPanel
-                        config={toolbarConfig}
-                        onConfigChange={handleConfigChange}
-                        isOpen={isConfigPanelOpen}
-                        onToggle={() => setIsConfigPanelOpen(!isConfigPanelOpen)}
-                      />
-                    </div>
+                    {/* Eliminado ToolbarConfigPanel y controles de posición de toolbar */}
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setIsPreviewMode(!isPreviewMode)}
+                      onClick={() => setPreviewOpen(true)}
                       className="flex-1 sm:flex-none order-1 sm:order-2 text-xs sm:text-sm min-w-0"
                     >
-                      {isPreviewMode ? <Settings className="w-3 h-3 sm:w-4 sm:h-4" /> : <Eye className="w-3 h-3 sm:w-4 sm:h-4" />}
-                      <span className="ml-1 sm:ml-2 truncate">
-                        {isPreviewMode ? 'Editar' : 'Vista Previa'}
-                      </span>
+                      <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="ml-1 sm:ml-2 truncate">Vista Previa</span>
                     </Button>
                     <Button
                       onClick={handleSave}
@@ -289,18 +311,29 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                         className="text-sm sm:text-base"
                       />
                     </div>
-
-                    {/* Editor Quill */}
-                    <div className="border rounded-lg overflow-hidden">
-                      <ReactQuill
-                        ref={quillRef}
-                        value={blogPost.content}
-                        onChange={handleEditorChange}
-                        modules={quillModules}
-                        placeholder="Comparte tu mensaje espiritual..."
-                        style={{ minHeight: '250px' }}
-                        className="text-sm sm:text-base"
-                      />
+                    {/* Editor Quill con toolbar fijo y área de edición scrollable interna */}
+                    <div className="border rounded-lg overflow-hidden" style={{ height: '500px', display: 'flex', flexDirection: 'column' }}>
+                      <div style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                        {/* Toolbar fijo */}
+                        <div
+                          className="quill-toolbar-sticky"
+                          style={{ position: 'sticky', top: 0, zIndex: 10, background: 'white', borderBottom: '1px solid #eee' }}
+                        >
+                          {/* El toolbar real será inyectado por ReactQuill, pero este div ayuda a que el sticky funcione */}
+                        </div>
+                        {/* Editor scrollable */}
+                        <div style={{ flex: 1, overflowY: 'auto' }}>
+                          <ReactQuill
+                            ref={quillRef}
+                            value={blogPost.content}
+                            onChange={handleEditorChange}
+                            modules={quillModules}
+                            placeholder="Comparte tu mensaje espiritual..."
+                            style={{ height: '100%', minHeight: '250px' }}
+                            className="text-sm sm:text-base h-full"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -314,7 +347,6 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
               </CardContent>
             </Card>
           </div>
-
           {/* Panel Lateral */}
           <div className="space-y-4 sm:space-y-6">
             {/* Configuración */}
@@ -350,7 +382,6 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                     </SelectContent>
                   </Select>
                 </div>
-
                 <div>
                   <label className="text-xs sm:text-sm font-medium mb-2 block">Tiempo de lectura</label>
                   <Select
@@ -369,7 +400,6 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                     </SelectContent>
                   </Select>
                 </div>
-
                 <div>
                   <label className="text-xs sm:text-sm font-medium mb-2 block">Imagen destacada</label>
                   <Input
@@ -379,7 +409,6 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                     className="h-9 text-sm"
                   />
                 </div>
-
                 <div className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -394,7 +423,6 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                 </div>
               </CardContent>
             </Card>
-
             {/* Vista previa de imagen */}
             {blogPost.featured_image && (
               <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
@@ -414,6 +442,27 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                       target.src = '/placeholder.svg';
                     }}
                   />
+                </CardContent>
+              </Card>
+            )}
+            {/* Mostrar lista de borradores debajo del panel de configuración */}
+            {drafts.length > 0 && (
+              <Card className="shadow-xl border-0 bg-yellow-50">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base font-semibold text-yellow-900">Borradores guardados</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {drafts.map(draft => (
+                      <button
+                        key={draft.id}
+                        onClick={() => handleLoadDraft(draft)}
+                        className="px-3 py-1 rounded bg-yellow-100 hover:bg-yellow-200 text-yellow-900 text-xs border border-yellow-300"
+                      >
+                        {draft.title || 'Sin título'}
+                      </button>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             )}

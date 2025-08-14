@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, ArrowRight, BookOpen, X, Share2, ArrowLeft, Clock, User, Plus, Sparkles } from "lucide-react";
-import { getBlogPosts } from "@/utils/blogSupabase";
+import { getPublishedBlogPosts } from "@/utils/blogSupabase";
 import { BlogPost } from "@/lib/supabase";
 import { isAuthenticated } from "@/utils/auth";
 import { getCategoryName } from "@/utils/categories";
@@ -21,7 +21,7 @@ export function BlogSection() {
     const loadArticles = async () => {
       setLoading(true);
       try {
-        const savedArticles = await getBlogPosts();
+        const savedArticles = await getPublishedBlogPosts();
         setArticles(savedArticles);
       } catch (error) {
         console.error('Error loading articles:', error);
@@ -35,7 +35,7 @@ export function BlogSection() {
     // Escuchar cuando se vuelve visible la página
     const handleVisibilityChange = async () => {
       if (!document.hidden) {
-        const savedArticles = await getBlogPosts();
+        const savedArticles = await getPublishedBlogPosts();
         setArticles(savedArticles);
       }
     };
@@ -66,7 +66,7 @@ export function BlogSection() {
   // Método público para recargar artículos (útil para llamadas externas)
   const reloadArticles = async () => {
     try {
-      const savedArticles = await getBlogPosts();
+      const savedArticles = await getPublishedBlogPosts();
       setArticles(savedArticles);
     } catch (error) {
       console.error('Error reloading articles:', error);
