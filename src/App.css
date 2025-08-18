@@ -1,3 +1,18 @@
+/* Ocultar barra de scroll vertical solo en el toolbar de Quill */
+.quill-toolbar-sticky-fix .ql-toolbar {
+  scrollbar-width: none; /* Firefox */
+}
+.quill-toolbar-sticky-fix .ql-toolbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+/* Fijar el toolbar de Quill dentro del área de edición */
+.quill-toolbar-sticky-fix .ql-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
 #root {
   max-width: 1280px;
   margin: 0 auto;

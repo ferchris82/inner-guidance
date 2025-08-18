@@ -330,7 +330,7 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
                             modules={quillModules}
                             placeholder="Comparte tu mensaje espiritual..."
                             style={{ height: '100%', minHeight: '250px' }}
-                            className="text-sm sm:text-base h-full"
+                            className="text-sm sm:text-base h-full quill-toolbar-sticky-fix"
                           />
                         </div>
                       </div>
