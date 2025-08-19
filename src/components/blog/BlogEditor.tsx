@@ -293,6 +293,12 @@ export function BlogEditor({ editingPost }: BlogEditorProps) {
     try {
       const result: UploadResult = await uploadImage(file);
       
+      // 🔍 DEBUG: Log upload result
+      console.log('🔍 Upload result:', result);
+      console.log('🔍 Result URL:', result.url);
+      console.log('🔍 URL type:', typeof result.url);
+      console.log('🔍 URL starts with http:', result.url?.startsWith('http'));
+      
       if (result.success && result.url) {
         setBlogPost(prev => ({ ...prev, featured_image: result.url }));
         setSaveMessage('¡Imagen subida exitosamente!');

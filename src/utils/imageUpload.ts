@@ -121,6 +121,9 @@ Error: ${error.message}`
       .getPublicUrl(filePath);
 
     console.log('🔗 URL pública generada:', publicUrl);
+    console.log('🔍 DEBUG - publicUrl type:', typeof publicUrl);
+    console.log('🔍 DEBUG - publicUrl length:', publicUrl?.length);
+    console.log('🔍 DEBUG - publicUrl starts with http:', publicUrl?.startsWith('http'));
 
     return {
       success: true,

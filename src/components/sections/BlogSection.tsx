@@ -8,6 +8,38 @@ import { getPublishedBlogPosts } from "@/utils/blogSupabase";
 import { BlogPost } from "@/lib/supabase";
 import { isAuthenticated } from "@/utils/auth";
 import { getCategoryName, getCategories, Category } from "@/utils/categories";
+// Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react';
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+// Import required modules
+import { EffectCoverflow, Pagination, Navigation, Autoplay } from 'swiper/modules';
+
+// 🔧 Utility function to decode hex-encoded URLs
+const decodeHexUrl = (url: string): string => {
+  if (!url) return url;
+  
+  // Check if URL is hex-encoded (starts with \x)
+  if (url.includes('\\x')) {
+    try {
+      let result = '';
+      const cleanHex = url.replace(/\\x/g, '');
+      for (let i = 0; i < cleanHex.length; i += 2) {
+        result += String.fromCharCode(parseInt(cleanHex.substr(i, 2), 16));
+      }
+      console.log('🔧 Decoded hex URL:', result);
+      return result;
+    } catch (error) {
+      console.error('❌ Error decoding hex URL:', error);
+      return url;
+    }
+  }
+  
+  return url;
+};
 
 export function BlogSection() {
   const [selectedArticle, setSelectedArticle] = useState<number | null>(null);
@@ -26,6 +58,17 @@ export function BlogSection() {
           getPublishedBlogPosts(),
           getCategories()
         ]);
+        
+        // 🔍 DEBUG: Log image URLs
+        console.log('🔍 DEBUG - Articles loaded:', savedArticles.length);
+        savedArticles.forEach((article, index) => {
+          if (article.featured_image) {
+            console.log(`📷 Article ${index + 1}: "${article.title}"`);
+            console.log(`   Image URL: ${article.featured_image}`);
+            console.log(`   URL valid: ${article.featured_image.startsWith('http')}`);
+          }
+        });
+        
         setArticles(savedArticles);
         setCategories(categoriesData);
       } catch (error) {
@@ -44,6 +87,10 @@ export function BlogSection() {
           getPublishedBlogPosts(),
           getCategories()
         ]);
+        
+        // 🔍 DEBUG: Log image URLs on visibility change
+        console.log('🔍 DEBUG - Articles reloaded on visibility change:', savedArticles.length);
+        
         setArticles(savedArticles);
         setCategories(categoriesData);
       }
@@ -55,6 +102,18 @@ export function BlogSection() {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
+
+  // 🔍 DEBUG: useEffect to log first article when articles change
+  useEffect(() => {
+    if (articles.length > 0) {
+      console.log('🔍 First article data:', {
+        title: articles[0].title,
+        featured_image: articles[0].featured_image,
+        has_image: !!articles[0].featured_image,
+        image_length: articles[0].featured_image?.length
+      });
+    }
+  }, [articles]);
 
   const openArticle = (index: number) => {
     setSelectedArticle(index);
@@ -116,6 +175,12 @@ export function BlogSection() {
 
   // Verificar si el usuario es admin
   const userIsAdmin = isAuthenticated();
+
+  // 🔍 DEBUG: Additional logging
+  console.log('🔍 BlogSection Debug:');
+  console.log('   Loading:', loading);
+  console.log('   Articles count:', articles.length);
+  console.log('   User is admin:', userIsAdmin);
 
   if (articles.length === 0) {
     return (
@@ -220,9 +285,17 @@ export function BlogSection() {
                     </div>
                     <div className="md:w-1/3 bg-gradient-spiritual flex items-center justify-center p-8 relative overflow-hidden">
                       <img 
-                        src={articles[0].featured_image} 
+                        src={decodeHexUrl(articles[0].featured_image)} 
                         alt="Viaje de transformación espiritual - De la aflicción al propósito"
                         className="w-full h-full object-cover absolute inset-0 opacity-90"
+                        onError={(e) => {
+                          console.error('🚨 Image failed to load:', articles[0].featured_image);
+                          console.error('🚨 Decoded URL:', decodeHexUrl(articles[0].featured_image));
+                          console.error('Error event:', e);
+                        }}
+                        onLoad={() => {
+                          console.log('✅ Image loaded successfully:', decodeHexUrl(articles[0].featured_image));
+                        }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                       <div className="relative z-10 text-center text-white">
@@ -235,55 +308,143 @@ export function BlogSection() {
               </div>
             )}
 
-            {/* Articles Grid */}
+            {/* 3D Carousel Articles */}
             {articles.length > 1 && (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                {(showAllArticles ? articles.slice(1) : articles.slice(1, 4)).map((article, index) => (
-                  <Card 
-                    key={article.id} 
-                    className="shadow-peaceful hover:shadow-spiritual transition-spiritual animate-slide-up group cursor-pointer overflow-hidden"
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    <CardHeader className="break-words">
-                      <div className="flex items-center justify-between mb-2">
-                        <Badge variant="outline" className="text-xs">
-                          {getCategoryName(article.category, categories)}
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">
-                          {article.read_time}
-                        </span>
-                      </div>
-                      <CardTitle className="text-xl font-heading group-hover:text-primary transition-spiritual break-words hyphens-auto">
-                        {article.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="break-words">
-                      <p className="text-muted-foreground mb-4 text-sm leading-relaxed break-words hyphens-auto">
-                        {article.excerpt}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                          <Calendar className="w-3 h-3 icon-aqua-gradient" />
-                          <span>{formatDate(article.created_at)}</span>
-                        </div>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="group-hover:text-primary transition-spiritual"
-                          onClick={() => openArticle(index + 1)}
-                        >
-                          Leer más
-                          <ArrowRight className="w-3 h-3 ml-1 icon-aqua-gradient" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+              <div className="mb-12">
+                <div className="text-center mb-8">
+                  <h3 className="text-2xl font-heading font-bold text-primary mb-2">
+                    Más Artículos Espirituales
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Desliza para explorar más enseñanzas y reflexiones
+                  </p>
+                </div>
+                
+                <Swiper
+                  effect={'coverflow'}
+                  grabCursor={true}
+                  centeredSlides={true}
+                  slidesPerView={'auto'}
+                  coverflowEffect={{
+                    rotate: 50,
+                    stretch: 0,
+                    depth: 100,
+                    modifier: 1,
+                    slideShadows: true,
+                  }}
+                  pagination={{
+                    clickable: true,
+                    dynamicBullets: true,
+                  }}
+                  navigation={true}
+                  autoplay={{
+                    delay: 5000,
+                    disableOnInteraction: false,
+                  }}
+                  modules={[EffectCoverflow, Pagination, Navigation, Autoplay]}
+                  className="w-full py-12"
+                  style={{
+                    '--swiper-navigation-color': '#8B5CF6',
+                    '--swiper-pagination-color': '#8B5CF6',
+                  } as React.CSSProperties}
+                >
+                  {(showAllArticles ? articles.slice(1) : articles.slice(1, 6)).map((article, index) => (
+                    <SwiperSlide
+                      key={article.id}
+                      className="w-80 h-auto"
+                      style={{ width: '320px' }}
+                    >
+                      <Card 
+                        className="shadow-spiritual hover:shadow-divine transition-all duration-300 group cursor-pointer overflow-hidden h-full border-primary/20 hover:border-primary/50 bg-gradient-to-br from-white to-purple-50/30"
+                        onClick={() => openArticle(index + 1)}
+                      >
+                        {/* Featured Image */}
+                        {article.featured_image ? (
+                          <div className="relative w-full h-56 overflow-hidden">
+                            <img 
+                              src={decodeHexUrl(article.featured_image)} 
+                              alt={`Imagen del artículo: ${article.title}`}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                              onError={(e) => {
+                                console.error('🚨 Carousel image failed to load:', article.featured_image);
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                            
+                            {/* Category badge */}
+                            <div className="absolute top-4 left-4">
+                              <Badge className="bg-gradient-spiritual text-white border-0 shadow-lg">
+                                {getCategoryName(article.category, categories)}
+                              </Badge>
+                            </div>
+                            
+                            {/* Reading time */}
+                            <div className="absolute top-4 right-4">
+                              <Badge variant="secondary" className="bg-white/90 text-gray-800 border-0 shadow-lg">
+                                <Clock className="w-3 h-3 mr-1" />
+                                {article.read_time}
+                              </Badge>
+                            </div>
+                            
+                            {/* Title overlay */}
+                            <div className="absolute bottom-0 left-0 right-0 p-4">
+                              <h4 className="text-white font-heading font-bold text-lg leading-tight line-clamp-2">
+                                {article.title}
+                              </h4>
+                            </div>
+                          </div>
+                        ) : (
+                          // Fallback for articles without images
+                          <div className="relative w-full h-56 bg-gradient-spiritual flex items-center justify-center">
+                            <BookOpen className="w-16 h-16 text-white/80" />
+                            <div className="absolute bottom-0 left-0 right-0 p-4">
+                              <h4 className="text-white font-heading font-bold text-lg leading-tight line-clamp-2">
+                                {article.title}
+                              </h4>
+                            </div>
+                            <div className="absolute top-4 left-4">
+                              <Badge className="bg-white/20 text-white border-white/30">
+                                {getCategoryName(article.category, categories)}
+                              </Badge>
+                            </div>
+                            <div className="absolute top-4 right-4">
+                              <Badge className="bg-white/20 text-white border-white/30">
+                                <Clock className="w-3 h-3 mr-1" />
+                                {article.read_time}
+                              </Badge>
+                            </div>
+                          </div>
+                        )}
+                        
+                        <CardContent className="p-6">
+                          <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3 mb-4">
+                            {article.excerpt}
+                          </p>
+                          
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                              <Calendar className="w-3 h-3 icon-aqua-gradient" />
+                              <span>{formatDate(article.created_at)}</span>
+                            </div>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="group-hover:text-primary transition-spiritual text-primary/70 hover:text-primary"
+                            >
+                              Leer más
+                              <ArrowRight className="w-3 h-3 ml-1 icon-aqua-gradient" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
               </div>
             )}
 
-            {/* Show "View All" button only if there are more than 3 articles */}
-            {articles.length > 3 && (
+            {/* Show "View All" button only if there are more than 5 articles */}
+            {articles.length > 5 && !showAllArticles && (
               <div className="text-center">
                 <Button 
                   variant="outline" 
@@ -363,7 +524,7 @@ export function BlogSection() {
                 <div className="mb-8">
                   <div className="relative rounded-2xl overflow-hidden shadow-spiritual">
                     <img 
-                      src={articles[selectedArticle].featured_image} 
+                      src={decodeHexUrl(articles[selectedArticle].featured_image)} 
                       alt={`Imagen del artículo: ${articles[selectedArticle].title}`}
                       className="w-full h-auto object-contain max-h-96"
                     />
