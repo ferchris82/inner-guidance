@@ -7,11 +7,12 @@ import { Calendar, ArrowRight, BookOpen, X, Share2, ArrowLeft, Clock, User, Plus
 import { getPublishedBlogPosts } from "@/utils/blogSupabase";
 import { BlogPost } from "@/lib/supabase";
 import { isAuthenticated } from "@/utils/auth";
-import { getCategoryName } from "@/utils/categories";
+import { getCategoryName, getCategories, Category } from "@/utils/categories";
 
 export function BlogSection() {
   const [selectedArticle, setSelectedArticle] = useState<number | null>(null);
   const [articles, setArticles] = useState<BlogPost[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [showAllArticles, setShowAllArticles] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -21,8 +22,12 @@ export function BlogSection() {
     const loadArticles = async () => {
       setLoading(true);
       try {
-        const savedArticles = await getPublishedBlogPosts();
+        const [savedArticles, categoriesData] = await Promise.all([
+          getPublishedBlogPosts(),
+          getCategories()
+        ]);
         setArticles(savedArticles);
+        setCategories(categoriesData);
       } catch (error) {
         console.error('Error loading articles:', error);
       } finally {
@@ -35,8 +40,12 @@ export function BlogSection() {
     // Escuchar cuando se vuelve visible la página
     const handleVisibilityChange = async () => {
       if (!document.hidden) {
-        const savedArticles = await getPublishedBlogPosts();
+        const [savedArticles, categoriesData] = await Promise.all([
+          getPublishedBlogPosts(),
+          getCategories()
+        ]);
         setArticles(savedArticles);
+        setCategories(categoriesData);
       }
     };
     
@@ -198,7 +207,7 @@ export function BlogSection() {
                           <Calendar className="w-4 h-4 icon-aqua-gradient" />
                           <span>{formatDate(articles[0].created_at)}</span>
                         </div>
-                        <Badge variant="outline">{getCategoryName(articles[0].category)}</Badge>
+                        <Badge variant="outline">{getCategoryName(articles[0].category, categories)}</Badge>
                         <span>{articles[0].read_time} de lectura</span>
                       </div>
                       <Button 
@@ -238,7 +247,7 @@ export function BlogSection() {
                     <CardHeader className="break-words">
                       <div className="flex items-center justify-between mb-2">
                         <Badge variant="outline" className="text-xs">
-                          {getCategoryName(article.category)}
+                          {getCategoryName(article.category, categories)}
                         </Badge>
                         <span className="text-xs text-muted-foreground">
                           {article.read_time}
@@ -322,7 +331,7 @@ export function BlogSection() {
               <header className="mb-8 break-words">
                 <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-4 flex-wrap">
                   <Badge className="bg-gradient-spiritual">
-                    {getCategoryName(articles[selectedArticle].category)}
+                    {getCategoryName(articles[selectedArticle].category, categories)}
                   </Badge>
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-4 h-4" />

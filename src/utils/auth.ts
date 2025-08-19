@@ -15,6 +15,11 @@ export interface AuthState {
 
 // Función para inicializar el logout automático
 export const initializeAutoLogout = (): (() => void) => {
+  // TEMPORALMENTE DESACTIVADO PARA DEBUG
+  console.log('🔐 Auto-logout desactivado temporalmente para debug');
+  return () => {}; // No-op cleanup function
+  
+  /*
   // Logout automático al cerrar la ventana/pestaña
   const handleBeforeUnload = () => {
     logout();
@@ -51,6 +56,7 @@ export const initializeAutoLogout = (): (() => void) => {
     window.removeEventListener('pagehide', handleBeforeUnload);
     document.removeEventListener('visibilitychange', handleVisibilityChange);
   };
+  */
 };
 
 // Función para validar credenciales
@@ -68,8 +74,10 @@ export const login = (username: string, password: string): boolean => {
     };
     
     try {
-      // Usar sessionStorage para que se borre automáticamente al cerrar el navegador
-      sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authState));
+      // Usar localStorage para mantener sesión al recargar (con expiración)
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authState));
+      console.log('🔐 Login exitoso, datos guardados:', authState);
+      console.log('🔐 Verificando que se guardó:', localStorage.getItem(AUTH_STORAGE_KEY));
       
       // Inicializar el logout automático
       initializeAutoLogout();
@@ -86,6 +94,8 @@ export const login = (username: string, password: string): boolean => {
 // Función para cerrar sesión
 export const logout = (): void => {
   try {
+    console.log('🔐 Ejecutando logout - limpiando datos');
+    localStorage.removeItem(AUTH_STORAGE_KEY);
     sessionStorage.removeItem(AUTH_STORAGE_KEY);
     // Limpiar también otros datos de sesión si es necesario
     sessionStorage.removeItem('adminView');
@@ -106,22 +116,32 @@ export const logout = (): void => {
 // Función para verificar si está autenticado
 export const isAuthenticated = (): boolean => {
   try {
-    const stored = sessionStorage.getItem(AUTH_STORAGE_KEY);
-    if (!stored) return false;
+    const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+    console.log('🔐 Datos almacenados:', stored);
+    if (!stored) {
+      console.log('🔐 No hay datos de autenticación almacenados');
+      return false;
+    }
     
     const authState: AuthState = JSON.parse(stored);
+    console.log('🔐 Estado parseado:', authState);
     const now = Date.now();
     const expiryTime = authState.timestamp + (AUTH_EXPIRY_HOURS * 60 * 60 * 1000);
+    console.log('🔐 Tiempo actual:', new Date(now));
+    console.log('🔐 Tiempo expiración:', new Date(expiryTime));
+    console.log('🔐 ¿Expirado?:', now > expiryTime);
     
     // Verificar si la sesión no ha expirado
     if (now > expiryTime) {
+      console.log('🔐 Sesión expirada, haciendo logout');
       logout(); // Limpiar sesión expirada
       return false;
     }
     
+    console.log('🔐 Autenticación válida:', authState.isAuthenticated);
     return authState.isAuthenticated;
   } catch (error) {
-    console.error('Error checking auth state:', error);
+    console.error('🔐 Error checking auth state:', error);
     logout(); // Limpiar datos corruptos
     return false;
   }
@@ -132,7 +152,7 @@ export const getAuthenticatedUser = (): string | null => {
   try {
     if (!isAuthenticated()) return null;
     
-    const stored = sessionStorage.getItem(AUTH_STORAGE_KEY);
+    const stored = localStorage.getItem(AUTH_STORAGE_KEY);
     if (!stored) return null;
     
     const authState: AuthState = JSON.parse(stored);
@@ -146,13 +166,13 @@ export const getAuthenticatedUser = (): string | null => {
 // Función para renovar la sesión
 export const renewSession = (): void => {
   try {
-    const stored = sessionStorage.getItem(AUTH_STORAGE_KEY);
+    const stored = localStorage.getItem(AUTH_STORAGE_KEY);
     if (!stored) return;
     
     const authState: AuthState = JSON.parse(stored);
     if (authState.isAuthenticated) {
       authState.timestamp = Date.now();
-      sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authState));
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authState));
     }
   } catch (error) {
     console.error('Error renewing session:', error);

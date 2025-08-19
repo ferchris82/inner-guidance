@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { getBlogPosts, deleteBlogPost } from '@/utils/blogSupabase';
 import { BlogPost } from '@/lib/supabase';
-import { getCategoryName } from '@/utils/categories';
+import { getCategoryName, getCategories, Category } from '@/utils/categories';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 
 interface BlogManagerProps {
@@ -25,6 +25,7 @@ interface BlogManagerProps {
 
 export function BlogManager({ onEditPost, onNewPost }: BlogManagerProps) {
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -33,8 +34,12 @@ export function BlogManager({ onEditPost, onNewPost }: BlogManagerProps) {
   const loadPosts = async () => {
     try {
       setLoading(true);
-      const blogPosts = await getBlogPosts();
+      const [blogPosts, categoriesData] = await Promise.all([
+        getBlogPosts(),
+        getCategories()
+      ]);
       setPosts(blogPosts);
+      setCategories(categoriesData);
       setError(null);
     } catch (err) {
       console.error('Error cargando posts:', err);
@@ -81,7 +86,7 @@ export function BlogManager({ onEditPost, onNewPost }: BlogManagerProps) {
   };
 
   const getCategoryLabel = (category: string) => {
-    return getCategoryName(category);
+    return getCategoryName(category, categories);
   };
 
   if (loading) {

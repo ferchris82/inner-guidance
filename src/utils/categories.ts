@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import React from 'react';
 
 export interface Category {
   id: string;
@@ -130,6 +131,36 @@ export const getCategoryById = async (id: string): Promise<Category | null> => {
   }
 };
 
+// Cache de categorías para evitar múltiples consultas a la base de datos
+let categoriesCache: Category[] | null = null;
+let cacheTime: number = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+
+// Obtener categorías con cache
+const getCategoriesWithCache = async (): Promise<Category[]> => {
+  const now = Date.now();
+  
+  // Si tenemos cache válido, usarlo
+  if (categoriesCache && (now - cacheTime) < CACHE_DURATION) {
+    return categoriesCache;
+  }
+  
+  // Obtener categorías frescas
+  try {
+    const categories = await getCategories();
+    categoriesCache = categories;
+    cacheTime = now;
+    return categories;
+  } catch (error) {
+    console.error('Error getting categories with cache:', error);
+    // Si hay error pero tenemos cache, usarlo aunque esté expirado
+    if (categoriesCache) {
+      return categoriesCache;
+    }
+    return getDefaultCategories();
+  }
+};
+
 // Obtener nombre de categoría por ID (función síncrona con cache)
 export const getCategoryName = (id: string, categories?: Category[]): string => {
   if (categories) {
@@ -137,6 +168,42 @@ export const getCategoryName = (id: string, categories?: Category[]): string => 
     return category?.name || id;
   }
   return id;
+};
+
+// Obtener nombre de categoría por ID (función asíncrona que carga las categorías automáticamente)
+export const getCategoryNameAsync = async (id: string): Promise<string> => {
+  try {
+    const categories = await getCategoriesWithCache();
+    const category = categories.find(cat => cat.id === id);
+    return category?.name || id;
+  } catch (error) {
+    console.error('Error getting category name:', error);
+    return id;
+  }
+};
+
+// Hook personalizado para obtener categorías con cache
+export const useCategoriesCache = () => {
+  const [categories, setCategories] = React.useState<Category[]>(categoriesCache || []);
+  const [loading, setLoading] = React.useState(true);
+  
+  React.useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const cats = await getCategoriesWithCache();
+        setCategories(cats);
+      } catch (error) {
+        console.error('Error loading categories:', error);
+        setCategories(getDefaultCategories());
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadCategories();
+  }, []);
+  
+  return { categories, loading };
 };
 
 // Actualizar contador de artículos de una categoría

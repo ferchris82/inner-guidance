@@ -7,6 +7,7 @@ import { SocialManager } from './SocialManager';
 import { ContactMessagesManager } from '@/components/admin/ContactMessagesManager';
 import { NewsletterManager } from '@/components/admin/NewsletterManager';
 import { ResourcesManager } from '@/components/admin/ResourcesManager';
+import { StorageDebugComponent } from '@/components/debug/StorageDebugComponent';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -24,6 +25,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { BlogPost } from '@/lib/supabase';
 import { getBlogPosts } from '@/utils/blogSupabase';
+import { getCategoryName, getCategories, Category } from '@/utils/categories';
 
 type DashboardView = 'overview' | 'editor' | 'manager' | 'categories' | 'social' | 'contacts' | 'newsletter' | 'resources';
 
@@ -32,6 +34,7 @@ export function BlogDashboard() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [recentArticles, setRecentArticles] = useState<BlogPost[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,7 +67,10 @@ export function BlogDashboard() {
       try {
         setIsLoading(true);
         setError(null);
-        const articles = await getBlogPosts();
+        const [articles, categoriesData] = await Promise.all([
+          getBlogPosts(),
+          getCategories()
+        ]);
         // Filtrar solo los artículos publicados
         const publishedArticles = articles.filter(a => !a.is_draft);
         // Ordenar por fecha de creación (más recientes primero) y tomar solo los primeros 3
@@ -72,6 +78,7 @@ export function BlogDashboard() {
           .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
           .slice(0, 3);
         setRecentArticles(sortedArticles);
+        setCategories(categoriesData);
       } catch (error) {
         console.error('Error cargando artículos:', error);
         setError('Error cargando los artículos. Intenta refrescar la página.');
@@ -207,18 +214,6 @@ export function BlogDashboard() {
       month: 'long',
       year: 'numeric'
     });
-  };
-
-  // Función para obtener el nombre de la categoría
-  const getCategoryName = (category: string) => {
-    const categories: { [key: string]: string } = {
-      'llamado-divino': 'Llamado Divino',
-      'mensaje-profetico': 'Mensaje Profético',
-      'proposito-divino': 'Propósito Divino',
-      'identidad': 'Identidad',
-      'profecia': 'Profecía'
-    };
-    return categories[category] || category;
   };
 
   if (currentView === 'editor') {
@@ -535,7 +530,7 @@ export function BlogDashboard() {
                       </p>
                     </div>
                     <Badge variant="outline" className="text-xs flex-shrink-0">
-                      {getCategoryName(article.category)}
+                      {getCategoryName(article.category, categories)}
                     </Badge>
                   </div>
                 ))}

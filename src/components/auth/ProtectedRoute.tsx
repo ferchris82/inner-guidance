@@ -8,7 +8,18 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const [isAuth, setIsAuth] = useState<boolean | null>(null);
+  // Verificar autenticación inmediatamente al inicializar con debug
+  const [isAuth, setIsAuth] = useState<boolean | null>(() => {
+    try {
+      const authenticated = isAuthenticated();
+      console.log('🔐 Estado inicial de autenticación:', authenticated);
+      console.log('🔐 localStorage auth:', localStorage.getItem('inner_guidance_auth'));
+      return authenticated;
+    } catch (error) {
+      console.error('🔐 Error verificando auth inicial:', error);
+      return null;
+    }
+  });
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -19,6 +30,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     const checkAuth = () => {
       try {
         const authenticated = isAuthenticated();
+        console.log('🔐 Verificación periódica auth:', authenticated);
         setIsAuth(authenticated);
         setError(null);
         
@@ -32,7 +44,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
           }
         }
       } catch (error) {
-        console.error('Error verificando autenticación:', error);
+        console.error('🔐 Error verificando autenticación:', error);
         setError('Error verificando acceso. Intenta refrescar la página.');
         setIsAuth(false);
       }
@@ -61,24 +73,13 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     navigate('/');
   };
 
-  // Mientras se verifica la autenticación, mostrar loading
+  // Mientras se verifica la autenticación, mostrar loading solo si realmente es necesario
   if (isAuth === null) {
     return (
       <div className="min-h-screen bg-gradient-peaceful flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-muted-foreground">Verificando acceso...</p>
-          {error && (
-            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg max-w-sm mx-auto">
-              <p className="text-red-700 text-sm">{error}</p>
-              <button 
-                onClick={() => window.location.reload()} 
-                className="mt-2 text-red-600 hover:text-red-800 underline text-sm"
-              >
-                Refrescar
-              </button>
-            </div>
-          )}
         </div>
       </div>
     );
